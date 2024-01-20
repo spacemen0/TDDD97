@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .left-container {
+            width: 50%;
+            background-color: #e0e0e0;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        .right-container {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-right-box,
+        .bottom-right-box {
+            flex: 1;
+            background-color: #f0f0f0;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+    </style>
+    <title>页面布局</title>
+</head>
+
+<body>
+    <div class="left-container">
+        <!-- 左侧内容 -->
+        <p>左侧内容</p>
+    </div>
+
+    <div class="right-container">
+        <div class="top-right-box">
+            <!-- 右上侧内容 -->
+            <p>右上侧内容</p>
+        </div>
+
+        <div class="bottom-right-box">
+            <!-- 右下侧内容 -->
+            <p>右下侧内容</p>
+        </div>
+    </div>
+</body>
+
+</html>
