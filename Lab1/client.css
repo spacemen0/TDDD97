@@ -1,0 +1,99 @@
+      #main {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+          justify-content: center;
+      }
+      body{
+            background: linear-gradient(90deg,
+                    rgb(49, 49, 224) 0%,
+                    rgba(0, 212, 255, 1) 100%);
+      }
+
+      .left-container {
+          width: 340px;
+          height: 400px;
+          margin-right: 5px;
+          margin-top: 15%;
+      }
+
+      .right-container {
+          width: 250px;
+          height: 400px;
+          display: flex;
+          flex-direction: column;
+          margin-top: 15%;
+
+          gap: 5px;
+      }
+
+      .top-right-box {
+          background: #1a9cbd;
+          flex: 0.2;
+          padding-bottom: 5px;
+      }
+
+      .bottom-right-box {
+          background: #1a9cbd;
+          flex: 0.8;
+      }
+
+      .right-container form {
+          padding-top: 5px;
+          text-align: right;
+      }
+
+      .register-header {
+          text-align: center;
+      }
+
+      .input-wrapper {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          padding-left: 3px;
+          padding-right: 3px;
+      }
+
+      .input-wrapper input {
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+          border: none;
+          width: 130px;
+      }
+
+      select {
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+          border: none;
+      }
+
+      select:focus-visible {
+          outline-style: none;
+      }
+
+      option {
+          background: #25a0c2;
+          border: none;
+      }
+
+      input[type="submit"] {
+          border: none;
+          margin-right: 3px;
+          background: #94baf3;
+      }
+
+      input[type="submit"]:hover {
+          border: none;
+          background-color: #0eb8e7;
+      }
+
+      input[value="signup"] {
+          margin-top: 5px;
+      }
