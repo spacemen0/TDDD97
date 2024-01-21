@@ -7,10 +7,11 @@
                   rgba(0, 212, 255, 1) 100%);
           justify-content: center;
       }
-      body{
-            background: linear-gradient(90deg,
-                    rgb(49, 49, 224) 0%,
-                    rgba(0, 212, 255, 1) 100%);
+
+      body {
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
       }
 
       #logo-wrapper {
@@ -97,4 +98,33 @@
 
       input[value="signup"] {
           margin-top: 8px;
+      }
+
+      #message-box {
+          display: none;
+          position: fixed;
+          top: 40%;
+          left: 40%;
+          width: 20%;
+          height: 20%;
+          background-color: rgba(117, 149, 235, 0.925);
+          justify-content: center;
+          align-items: center;
+          z-index: 1;
+      }
+
+
+      .close {
+          position: relative;
+          top: 0px;
+          right: 0px;
+          font-size: 20px;
+          line-height: 15px;
+          cursor: pointer;
+      }
+
+      #message-text {
+          margin-top: 20%;
+          font-size: 20px;
+          text-align: center;
       }

@@ -50,6 +50,19 @@ function validateRegister() {
   return true;
 }
 
+function showMessageBox(message) {
+  var modal = document.getElementById("message-box");
+  var messageText = document.getElementById("message-text");
+
+  messageText.textContent = message;
+  modal.style.display = "block";
+}
+
+function closeMessageBox() {
+  var modal = document.getElementById("message-box");
+  modal.style.display = "none";
+}
+
 function register(event) {
   event.preventDefault();
   if (!validateRegister()) {
@@ -81,8 +94,7 @@ function register(event) {
     loadProfile();
   } else {
     let errorMessage = signUpResult.message;
-    console.log(errorMessage);
-    // Display error message to the user
+    showMessageBox(errorMessage);
   }
 }
 function validateLogin() {
@@ -114,6 +126,6 @@ function login(event) {
   } else {
     let errorMessage = signInResult.message;
     console.log(errorMessage);
-    // Display error message to the user
+    showMessageBox(errorMessage);
   }
 }
