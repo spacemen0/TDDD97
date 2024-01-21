@@ -17,30 +17,20 @@ function loadProfile() {
   let profile = document.getElementById("profile");
   main.innerHTML = profile.innerHTML;
 }
-function clearValidity() {
+function clearLoginValidity() {
+  let password = document.getElementById("password-login");
+  password.setCustomValidity("");
+}
+function clearRegisterValidity() {
   let password = document.getElementById("password");
   let repeatPassword = document.getElementById("repeat-psw");
   password.setCustomValidity("");
   repeatPassword.setCustomValidity("");
 }
 
-function validateLogin() {
-  let password = document.getElementById("password-login");
-  password.setCustomValidity("");
-  if (password.value.length < 8) {
-    password.setCustomValidity("Password must be at least 8 characters long");
-    password.reportValidity();
-    return false;
-  } else {
-    password.setCustomValidity("");
-  }
-  return true;
-}
-
 function validateRegister() {
   let password = document.getElementById("password");
   let repeatPassword = document.getElementById("repeat-psw");
-  password.setCustomValidity("");
 
   if (password.value.length < 8) {
     password.setCustomValidity("Password must be at least 8 characters long");
@@ -93,31 +83,37 @@ function register(event) {
     let errorMessage = signUpResult.message;
     console.log(errorMessage);
     // Display error message to the user
-    // document.getElementById("error-message").innerText = errorMessage;
   }
 }
-
+function validateLogin() {
+  let password = document.getElementById("password-login");
+  if (password.value.length < 8) {
+    password.setCustomValidity("Password must be at least 8 characters long");
+    password.reportValidity();
+    return false;
+  } else {
+    password.setCustomValidity("");
+  }
+  return true;
+}
 function login(event) {
   event.preventDefault();
   if (!validateLogin()) {
     return false;
   }
 
-  let email = document.getElementById("email").value;
-  let password = document.getElementById("password").value;
+  let email = document.getElementById("email-login").value;
+  let password = document.getElementById("password-login").value;
 
   let signInResult = serverstub.signIn(email, password);
 
   if (signInResult.success) {
     console.log(signInResult.message);
-    // Store the token at client-side
     localStorage.setItem("token", signInResult.data);
-    // Call the function to decide which view to display
     loadProfile();
   } else {
     let errorMessage = signInResult.message;
     console.log(errorMessage);
     // Display error message to the user
-    // document.getElementById("error-message").innerText = errorMessage;
   }
 }
