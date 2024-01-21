@@ -5,7 +5,7 @@
     <script src="client.js" type="text/javascript"></script>
     <script src="serverstub.js" type="text/javascript"></script>
     <script type=”text/view” id="welcome">
-        <div class="left-container">
+    <div class="left-container">
       <img src="wimage.png" alt="Logo and Url" />
     </div>
 
@@ -14,12 +14,12 @@
         <form class="login-form">
           <div class="input-wrapper">
             <label for="email">Email</label>
-            <input type="email" id="email-login" name="email" />
+            <input type="email" id="email-login" name="email" required />
           </div>
 
           <div class="input-wrapper">
             <label for="password">Password</label>
-            <input type="password" id="password-login" />
+            <input type="password" id="password-login" required />
           </div>
 
           <input type="submit" value="login" />
@@ -31,17 +31,17 @@
           <h2 class="register-header">Sign Up Here</h2>
           <div class="input-wrapper">
             <label for="first-name">First Name</label>
-            <input type="text" id="first-name" name="first-name" />
+            <input type="text" id="first-name" name="first-name" required />
           </div>
 
           <div class="input-wrapper">
             <label for="family-name">Family Name</label>
-            <input type="text" id="family-name" name="family-name" />
+            <input type="text" id="family-name" name="family-name" required />
           </div>
 
           <div class="input-wrapper">
             <label for="gender">Gender</label>
-            <select id="gender" name="gender">
+            <select id="gender" name="gender" required>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Other">Other</option>
@@ -50,27 +50,27 @@
 
           <div class="input-wrapper">
             <label for="city">City</label>
-            <input type="text" id="city" name="city" />
+            <input type="text" id="city" name="city" required />
           </div>
 
           <div class="input-wrapper">
             <label for="country">Country</label>
-            <input type="text" id="country" name="country" />
+            <input type="text" id="country" name="country" required />
           </div>
 
           <div class="input-wrapper">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" />
+            <input type="email" id="email" name="email" required />
           </div>
 
           <div class="input-wrapper">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" />
+            <input type="password" id="password" name="password" required />
           </div>
 
           <div class="input-wrapper">
             <label for="repeat-psw">Repeat-PSW</label>
-            <input type="password" id="repeat-psw" name="repeat-psw" />
+            <input type="password" id="repeat-psw" name="repeat-psw" required />
           </div>
           <input type="submit" value="signup" />
         </form>
