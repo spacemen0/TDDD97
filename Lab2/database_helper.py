@@ -3,6 +3,8 @@ import sqlite3
 
 def init_db() -> sqlite3.Connection:
     conn = sqlite3.connect("database.db")
+    create_user_table(conn)
+    create_message_table(conn)
     return conn
 
 
@@ -26,14 +28,14 @@ def create_message_table(conn: sqlite3.Connection) -> None:
     c.close()
 
 
-def insert_user(conn: sqlite3.Connection, user: tuple) -> None:
+def create_user(conn: sqlite3.Connection, user: tuple) -> None:
     c = conn.cursor()
     c.execute("INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", user)
     conn.commit()
     c.close()
 
 
-def get_user_by_id(conn: sqlite3.Connection, id: int) -> tuple:
+def get_user_by_id(conn: sqlite3.Connection, id: int) -> tuple | None:
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE id = ?", (id,))
     user = c.fetchone()
@@ -41,7 +43,7 @@ def get_user_by_id(conn: sqlite3.Connection, id: int) -> tuple:
     return user
 
 
-def get_user_by_email(conn: sqlite3.Connection, email: str) -> tuple:
+def get_user_by_email(conn: sqlite3.Connection, email: str) -> tuple | None:
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE email = ?", (email,))
     user = c.fetchone()
