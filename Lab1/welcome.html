@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="client.css" />
+    <script src="client.js"></script>
     <title>Twidder</title>
   </head>
 
@@ -30,7 +31,7 @@
       </div>
 
       <div class="bottom-right-box">
-        <form class="register-form">
+        <form class="register-form" onsubmit="register(event);">
           <h2 class="register-header">Sign Up Here</h2>
           <div class="input-wrapper">
             <label for="first-name">First Name</label>
@@ -68,12 +69,24 @@
 
           <div class="input-wrapper">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              oninput="clearValidity()"
+              required
+            />
           </div>
 
           <div class="input-wrapper">
             <label for="repeat-psw">Repeat-PSW</label>
-            <input type="password" id="repeat-psw" name="repeat-psw" required />
+            <input
+              type="password"
+              id="repeat-psw"
+              name="repeat-psw"
+              oninput="clearValidity()"
+              required
+            />
           </div>
           <input type="submit" value="signup" />
         </form>
