@@ -10,7 +10,20 @@ function clearValidity() {
   repeatPassword.setCustomValidity("");
 }
 
-function validateData() {
+function validateLogin() {
+  let password = document.getElementById("password-login");
+  password.setCustomValidity("");
+  if (password.value.length < 8) {
+    password.setCustomValidity("Password must be at least 8 characters long");
+    password.reportValidity();
+    return false;
+  } else {
+    password.setCustomValidity("");
+  }
+  return true;
+}
+
+function validateRegister() {
   let password = document.getElementById("password");
   let repeatPassword = document.getElementById("repeat-psw");
   password.setCustomValidity("");
@@ -35,10 +48,20 @@ function validateData() {
 
 function register(event) {
   event.preventDefault();
-  if (!validateData()) {
+  if (!validateRegister()) {
     return false;
   }
   let form = document.getElementById("register-form");
+  form.reset();
+  return true;
+}
+
+function login(event) {
+  event.preventDefault();
+  if (!validateLogin()) {
+    return false;
+  }
+  let form = document.getElementById("login-form");
   form.reset();
   return true;
 }
