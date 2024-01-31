@@ -46,28 +46,28 @@ class FlaskAppTests(unittest.TestCase):
                     self.assertTrue(
                         is_positive, "It looks like the sign up was not successful."
                     )
-                    print(f"Test_01_sign_up correct email passed: âœ…")
+                    print(f"Test_01_sign_up correct email passed: ")
                 elif index == 1:
                     self.assertFalse(
                         is_positive,
                         "It looks like the sign up was successful with duplicate email.",
                     )
-                    print(f"Test_01_sign_up duplicate email passed: âœ…")
+                    print(f"Test_01_sign_up duplicate email passed: ")
                 else:
                     self.assertTrue(
                         is_positive,
                         "It looks like the sign up was not successful for 2nd user.",
                     )
-                    print(f"Test_01_sign_up 2nd user passed: âœ…")
+                    print(f"Test_01_sign_up 2nd user passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"Test_01_sign_up crashed: âŒ")
+                print(f"Test_01_sign_up crashed: ")
             except requests.exceptions.RequestException as e:
                 print(traceback.format_exc())
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"Test_01_sign_up failed: âŒ {ae}")
+                print(f"Test_01_sign_up failed:  {ae}")
 
     def test_02_sign_up_invalidate_data(self):
         url = f"{self.base_url}/sign_up"
@@ -104,18 +104,18 @@ class FlaskAppTests(unittest.TestCase):
                     f"It looks like the sign up was successful with invalid email {email}.",
                 )
                 print(
-                    f"test_02_sign_up_invalidate_data passed for invalid email {email}: âœ…"
+                    f"test_02_sign_up_invalidate_data passed for invalid email {email}: "
                 )
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
                 print(
-                    f"test_02_sign_up_invalidate_data crashed for invalid email {email}: âŒ"
+                    f"test_02_sign_up_invalidate_data crashed for invalid email {email}: "
                 )
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 print(
-                    f"test_02_sign_up_invalidate_data failed for invalid email {email}: âŒ {ae}"
+                    f"test_02_sign_up_invalidate_data failed for invalid email {email}:  {ae}"
                 )
 
         # List of fields to exclude in each iteration
@@ -156,20 +156,16 @@ class FlaskAppTests(unittest.TestCase):
                     is_positive,
                     f"It looks like the sign up was successful with missing {field}.",
                 )
-                print(
-                    f"test_02_sign_up_invalidate_data passed for missing {field}: âœ…"
-                )
+                print(f"test_02_sign_up_invalidate_data passed for missing {field}: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(
-                    f"test_02_sign_up_invalidate_data crashed for missing {field}: âŒ"
-                )
+                print(f"test_02_sign_up_invalidate_data crashed for missing {field}: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
                 print(
-                    f"test_02_sign_up_invalidate_data failed for missing {field}: âŒ {ae}"
+                    f"test_02_sign_up_invalidate_data failed for missing {field}:  {ae}"
                 )
 
     def test_03_sign_in(self):
@@ -199,27 +195,27 @@ class FlaskAppTests(unittest.TestCase):
                             self.fail(f"Token is missing from the response headers.")
                     else:
                         self.fail(f"Response headers are missing.")
-                    print(f"test_03_sign_in correct password passed: âœ…")
+                    print(f"test_03_sign_in correct password passed: ")
                 elif password == passwords[1]:
                     self.assertFalse(
                         is_positive,
                         "It looks like the sign in was successful with incorrect password.",
                     )
-                    print(f"test_03_sign_in incorrect password passed: âœ…")
+                    print(f"test_03_sign_in incorrect password passed: ")
                 else:
                     self.assertFalse(
                         is_positive,
                         "It looks like the sign in was successful with missing password.",
                     )
-                    print(f"test_03_sign_in missing password passed: âœ…")
+                    print(f"test_03_sign_in missing password passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_03_sign_in crashed: âŒ")
+                print(f"test_03_sign_in crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_03_sign_in failed: âŒ {ae}")
+                print(f"test_03_sign_in failed:  {ae}")
 
     def test_04_change_password(self):
         url = f"{self.base_url}/change_password"
@@ -267,35 +263,35 @@ class FlaskAppTests(unittest.TestCase):
                         "It looks like the change password was successful with "
                         "incorrect token.",
                     )
-                    print(f"test_04_change_password incorrect token passed: âœ…")
+                    print(f"test_04_change_password incorrect token passed: ")
                 elif i == 1:
                     self.assertFalse(
                         is_positive,
                         "It looks like the change password was successful with "
                         "incorrect old password.",
                     )
-                    print(f"test_04_change_password incorrect old password passed: âœ…")
+                    print(f"test_04_change_password incorrect old password passed: ")
                 elif i == 2:
                     self.assertFalse(
                         is_positive,
                         "It looks like the change password was successful with "
                         "missing new password.",
                     )
-                    print(f"test_04_change_password missing new password passed: âœ…")
+                    print(f"test_04_change_password missing new password passed: ")
                 else:
                     self.assertTrue(
                         is_positive,
                         "It looks like the change password was not successful.",
                     )
-                    print(f"test_04_change_password correct password passed: âœ…")
+                    print(f"test_04_change_password correct password passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_04_change_password crashed: âŒ")
+                print(f"test_04_change_password crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_04_change_password failed: âŒ {ae}")
+                print(f"test_04_change_password failed:  {ae}")
 
     def test_05_get_user_data_by_token(self):
         url = f"{self.base_url}/get_user_data_by_token"
@@ -319,29 +315,29 @@ class FlaskAppTests(unittest.TestCase):
                         is_positive,
                         "It looks like the get user data by token was not successful.",
                     )
-                    print(f"test_05_get_user_data_by_token correct token passed: âœ…")
+                    print(f"test_05_get_user_data_by_token correct token passed: ")
                 elif token == tokens[1]:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user data by token was successful with "
                         "invalid token.",
                     )
-                    print(f"test_05_get_user_data_by_token incorrect token passed: âœ…")
+                    print(f"test_05_get_user_data_by_token incorrect token passed: ")
                 else:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user data by token was successful with "
                         "missing token.",
                     )
-                    print(f"test_05_get_user_data_by_token missing token passed: âœ…")
+                    print(f"test_05_get_user_data_by_token missing token passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_05_get_user_data_by_token crashed: âŒ")
+                print(f"test_05_get_user_data_by_token crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_05_get_user_data_by_token failed: âŒ {ae}")
+                print(f"test_05_get_user_data_by_token failed:  {ae}")
 
     def test_06_get_user_data_by_email(self):
         token = self.token
@@ -372,52 +368,50 @@ class FlaskAppTests(unittest.TestCase):
                         is_positive,
                         "It looks like the get user data by email was not successful.",
                     )
-                    print(f"test_06_get_user_data_by_email correct email passed: âœ…")
+                    print(f"test_06_get_user_data_by_email correct email passed: ")
                 elif i == 1:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user data by email was successful with "
                         "invalid token.",
                     )
-                    print(f"test_06_get_user_data_by_email incorrect token passed: âœ…")
+                    print(f"test_06_get_user_data_by_email incorrect token passed: ")
                 elif i == 2:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user data by email was successful with "
                         "missing token.",
                     )
-                    print(f"test_06_get_user_data_by_email missing token passed: âœ…")
+                    print(f"test_06_get_user_data_by_email missing token passed: ")
                 elif i == 3:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user data by email was successful with "
                         "missing email.",
                     )
-                    print(f"test_06_get_user_data_by_email missing email passed: âœ…")
+                    print(f"test_06_get_user_data_by_email missing email passed: ")
 
                 elif i == 4:
                     self.assertTrue(
                         is_positive,
                         "It looks like the get 2nd user data by email was not successful.",
                     )
-                    print(f"test_06_get_user_data_by_email 2nd user passed: âœ…")
+                    print(f"test_06_get_user_data_by_email 2nd user passed: ")
                 else:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user data by email was successful "
                         "with non-existing email.",
                     )
-                    print(
-                        f"test_06_get_user_data_by_email non-existing email passed: âœ…"
-                    )
+                    print(f"test_06_get_user_data_by_email non-existing email passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_06_get_user_data_by_email crashed: âŒ")
+                print(f"test_06_get_user_data_by_email crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_06_get_user_data_by_email failed: âŒ {ae}")
+                print(f"test_06_get_user_data_by_email failed:  {ae}")
 
     def test_07_post_message(self):
         url = f"{self.base_url}/post_message"
@@ -477,55 +471,55 @@ class FlaskAppTests(unittest.TestCase):
                         "It looks like the post message was successful with "
                         "incorrect token.",
                     )
-                    print(f"test_07_post_message incorrect token passed: âœ…")
+                    print(f"test_07_post_message incorrect token passed: ")
                 elif i == 1:
                     self.assertFalse(
                         is_positive,
                         "It looks like the post message was successful with "
                         "non-existing email.",
                     )
-                    print(f"test_07_post_message non-existing email passed: âœ…")
+                    print(f"test_07_post_message non-existing email passed: ")
                 elif i == 2:
                     self.assertFalse(
                         is_positive,
                         "It looks like the post message was successful with "
                         "missing token.",
                     )
-                    print(f"test_07_post_message missing token passed: âœ…")
+                    print(f"test_07_post_message missing token passed: ")
                 elif i == 3:
                     self.assertFalse(
                         is_positive,
                         "It looks like the post message was successful with "
                         "missing email.",
                     )
-                    print(f"test_07_post_message missing email passed: âœ…")
+                    print(f"test_07_post_message missing email passed: ")
                 elif i == 4:
                     self.assertFalse(
                         is_positive,
                         "It looks like the post message was successful with "
                         "missing message.",
                     )
-                    print(f"test_07_post_message missing message passed: âœ…")
+                    print(f"test_07_post_message missing message passed: ")
                 elif i == 5:
                     self.assertTrue(
                         is_positive,
                         "It looks like the post message was not successful on 2nd user wall.",
                     )
-                    print(f"test_07_post_message 2nd user post on wall passed: âœ…")
+                    print(f"test_07_post_message 2nd user post on wall passed: ")
                 else:
                     self.assertTrue(
                         is_positive,
                         "It looks like the post message was not successful on main user wall.",
                     )
-                    print(f"test_07_post_message main user post on wall passed: âœ…")
+                    print(f"test_07_post_message main user post on wall passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_07_post_message crashed: âŒ")
+                print(f"test_07_post_message crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_07_post_message failed: âŒ {ae}")
+                print(f"test_07_post_message failed:  {ae}")
 
     def test_08_get_user_messages_by_token(self):
         url = f"{self.base_url}/get_user_messages_by_token"
@@ -549,9 +543,7 @@ class FlaskAppTests(unittest.TestCase):
                         is_positive,
                         "It looks like the get user messages by token was not successful.",
                     )
-                    print(
-                        f"test_08_get_user_messages_by_token correct token passed: âœ…"
-                    )
+                    print(f"test_08_get_user_messages_by_token correct token passed: ")
                 elif token == tokens[1]:
                     self.assertFalse(
                         is_positive,
@@ -559,7 +551,7 @@ class FlaskAppTests(unittest.TestCase):
                         "invalid token.",
                     )
                     print(
-                        f"test_08_get_user_messages_by_token incorrect token passed: âœ…"
+                        f"test_08_get_user_messages_by_token incorrect token passed: "
                     )
                 else:
                     self.assertFalse(
@@ -567,17 +559,15 @@ class FlaskAppTests(unittest.TestCase):
                         "It looks like the get user messages by token was successful with "
                         "missing token.",
                     )
-                    print(
-                        f"test_08_get_user_messages_by_token missing token passed: âœ…"
-                    )
+                    print(f"test_08_get_user_messages_by_token missing token passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_08_get_user_messages_by_token crashed: âŒ")
+                print(f"test_08_get_user_messages_by_token crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_08_get_user_messages_by_token failed: âŒ {ae}")
+                print(f"test_08_get_user_messages_by_token failed:  {ae}")
 
     def test_09_get_user_messages_by_email(self):
         token = self.token
@@ -608,9 +598,7 @@ class FlaskAppTests(unittest.TestCase):
                         is_positive,
                         "It looks like the get user messages by email was not successful.",
                     )
-                    print(
-                        f"test_09_get_user_messages_by_email correct email passed: âœ…"
-                    )
+                    print(f"test_09_get_user_messages_by_email correct email passed: ")
                 elif i == 1:
                     self.assertFalse(
                         is_positive,
@@ -618,7 +606,7 @@ class FlaskAppTests(unittest.TestCase):
                         "invalid token.",
                     )
                     print(
-                        f"test_09_get_user_messages_by_email incorrect token passed: âœ…"
+                        f"test_09_get_user_messages_by_email incorrect token passed: "
                     )
                 elif i == 2:
                     self.assertFalse(
@@ -626,25 +614,21 @@ class FlaskAppTests(unittest.TestCase):
                         "It looks like the get user messages by email was successful with "
                         "missing token.",
                     )
-                    print(
-                        f"test_09_get_user_messages_by_email missing token passed: âœ…"
-                    )
+                    print(f"test_09_get_user_messages_by_email missing token passed: ")
                 elif i == 3:
                     self.assertFalse(
                         is_positive,
                         "It looks like the get user messages by email was successful with "
                         "missing email.",
                     )
-                    print(
-                        f"test_09_get_user_messages_by_email missing email passed: âœ…"
-                    )
+                    print(f"test_09_get_user_messages_by_email missing email passed: ")
 
                 elif i == 4:
                     self.assertTrue(
                         is_positive,
                         "It looks like the get 2nd user messages by email was not successful.",
                     )
-                    print(f"test_09_get_user_messages_by_email 2nd user passed: âœ…")
+                    print(f"test_09_get_user_messages_by_email 2nd user passed: ")
                 else:
                     self.assertFalse(
                         is_positive,
@@ -652,16 +636,16 @@ class FlaskAppTests(unittest.TestCase):
                         "with non-existing email.",
                     )
                     print(
-                        f"test_09_get_user_messages_by_email non-existing email passed: âœ…"
+                        f"test_09_get_user_messages_by_email non-existing email passed: "
                     )
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_09_get_user_messages_by_email crashed: âŒ")
+                print(f"test_09_get_user_messages_by_email crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_09_get_user_messages_by_email failed: âŒ {ae}")
+                print(f"test_09_get_user_messages_by_email failed:  {ae}")
 
     def test_10_sign_out(self):
         url = f"{self.base_url}/sign_out"
@@ -684,27 +668,27 @@ class FlaskAppTests(unittest.TestCase):
                     self.assertTrue(
                         is_positive, "It looks like the sign out was not successful."
                     )
-                    print(f"test_10_sign_out correct token passed: âœ…")
+                    print(f"test_10_sign_out correct token passed: ")
                 elif token == tokens[1]:
                     self.assertFalse(
                         is_positive,
                         "It looks like the sign out was successful with invalid token.",
                     )
-                    print(f"test_10_sign_out incorrect token passed: âœ…")
+                    print(f"test_10_sign_out incorrect token passed: ")
                 else:
                     self.assertFalse(
                         is_positive,
                         "It looks like the sign out was successful with missing token.",
                     )
-                    print(f"test_10_sign_out missing token passed: âœ…")
+                    print(f"test_10_sign_out missing token passed: ")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
-                print(f"test_10_sign_out crashed: âŒ")
+                print(f"test_10_sign_out crashed: ")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
             except AssertionError as ae:
                 # Catching AssertionError and printing a custom failure message
-                print(f"test_10_sign_out failed: âŒ {ae}")
+                print(f"test_10_sign_out failed:  {ae}")
 
 
 def contains_true(json_data):

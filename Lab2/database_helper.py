@@ -55,7 +55,13 @@ def get_user_by_email(conn: sqlite3.Connection, email: str) -> tuple | None:
 
 def update_password(conn: sqlite3.Connection, id: str, password: str) -> None:
     c = conn.cursor()
-    c.execute("UPDATE users SET password = ? WHERE id = ?", password, id)
+    c.execute(
+        "UPDATE users SET password = ? WHERE id = ?",
+        (
+            password,
+            id,
+        ),
+    )
     conn.commit()
     c.close()
 
