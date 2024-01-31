@@ -28,11 +28,13 @@ def create_message_table(conn: sqlite3.Connection) -> None:
     c.close()
 
 
-def create_user(conn: sqlite3.Connection, user: tuple) -> None:
+def create_user(conn: sqlite3.Connection, user: tuple) -> int:
     c = conn.cursor()
     c.execute("INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", user)
     conn.commit()
+    user_id = c.lastrowid
     c.close()
+    return user_id
 
 
 def get_user_by_id(conn: sqlite3.Connection, id: int) -> tuple | None:

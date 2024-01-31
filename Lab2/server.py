@@ -57,34 +57,107 @@ def sign_up():
 
     user = (email, password, firstname, familyname, gender, city, country)
     if get_user_by_email(conn.db, email) is None:
-        create_user(conn.db, user)
-        token = generate_access_token()
-        return response(True, "User Created", token), http.HTTPStatus.CREATED
+        uid = create_user(conn.db, user)
+        token = generate_access_token(uid)
+        return (
+            response(True, f"User Created with id {uid}", token),
+            http.HTTPStatus.CREATED,
+        )
     else:
         return "User already exists", http.HTTPStatus.CONFLICT
 
 
-@app.route("/sign_out", methods=["POST"])
+@app.route("/sign_out", methods=["DELETE"])
 def sign_out():
-    token = request.form.get("token")
-    if token is None:
-        return response(False, "incorrect token"), http.HTTPStatus.BAD_REQUEST
-    try:
-        tokens.remove(token)
-    except KeyError:
-        return response(False, "incorrect token"), http.HTTPStatus.BAD_REQUEST
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return (
+            response(False, "Unauthorized - Invalid or missing token"),
+            http.HTTPStatus.UNAUTHORIZED,
+        )
+    remove_token(token)
     return response(True, "signed out successfully"), http.HTTPStatus.NO_CONTENT
 
 
-def generate_access_token():
+@app.route("/change_password", methods=["POST"])
+def change_password():
+    old_password = request.form.get("old_password")
+    new_password = request.form.get("new_password")
+    if any(field is None or field == "" for field in [old_password, new_password]):
+        return response(False, "Please fill in all fields"), http.HTTPStatus.BAD_REQUEST
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return (
+            response(False, "Unauthorized - Invalid or missing token"),
+            http.HTTPStatus.UNAUTHORIZED,
+        )
+    uid = tokens[token]
+    user = get_user_by_id(uid)
+    if user is None:
+        return (
+            response(False, "User does not exist"),
+            http.HTTPStatus.INTERNAL_SERVER_ERROR,
+        )
+    if old_password != user[2]:
+        return (
+            response(False, "Incorrect password"),
+            http.HTTPStatus.UNAUTHORIZED,
+        )
+    if len(new_password) < 8:
+        return (
+            response(False, "Password must be at least 8 characters long"),
+            http.HTTPStatus.BAD_REQUEST,
+        )
+    update_password(uid, new_password)
+    return (
+        response(True, "Password updated"),
+        http.HTTPStatus.OK,
+    )
+
+
+@app.route("/get_user_data_by_token", methods=["GET"])
+def get_user_data_by_token():
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return (
+            response(False, "Unauthorized - Invalid or missing token"),
+            http.HTTPStatus.UNAUTHORIZED,
+        )
+    uid = tokens[token]
+    user = get_user_by_id(uid)
+    if user is None:
+        return (
+            response(False, "User does not exist"),
+            http.HTTPStatus.INTERNAL_SERVER_ERROR,
+        )
+    return response(True, "Success", user), http.HTTPStatus.OK
+
+
+def generate_access_token(user_id):
     access_token = secrets.token_hex(16)
-    tokens.add(access_token)
+    tokens[access_token] = user_id
     return access_token
 
 
-def remove_access_token(token):
-    tokens.discard(token)
-    return
+def remove_token(token):
+    tokens.pop(token, None)
+
+
+def is_valid_token(token):
+    return token in tokens
+
+
+def get_authorization_token(req):
+    if "Authorization" not in req.headers:
+        return None
+
+    auth_header = req.headers.get("Authorization")
+    parts = auth_header.split()
+
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        return None
+
+    return parts[1]
 
 
 def response(status, message, data=None):
