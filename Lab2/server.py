@@ -6,6 +6,7 @@ import threading
 
 app = Flask(__name__)
 conn = threading.local()
+tokens = set()
 
 
 @app.before_request
@@ -26,7 +27,10 @@ def sign_in():
         token = generate_access_token()
         return response(True, "User signed in", token), http.HTTPStatus.OK
     else:
-        return "Incorrect username or password", http.HTTPStatus.UNAUTHORIZED
+        return (
+            response(False, "Incorrect username or password"),
+            http.HTTPStatus.UNAUTHORIZED,
+        )
 
 
 @app.route("/sign_up", methods=["POST"])
@@ -43,11 +47,11 @@ def sign_up():
         field is None or field == ""
         for field in [email, password, firstname, familyname, gender, city, country]
     ):
-        return "Please fill in all fields", http.HTTPStatus.BAD_REQUEST
+        return response(False, "Please fill in all fields"), http.HTTPStatus.BAD_REQUEST
 
     if len(password) < 8:
         return (
-            "Password must be at least 8 characters long",
+            response(False, "Password must be at least 8 characters long"),
             http.HTTPStatus.BAD_REQUEST,
         )
 
@@ -60,9 +64,27 @@ def sign_up():
         return "User already exists", http.HTTPStatus.CONFLICT
 
 
+@app.route("/sign_out", methods=["POST"])
+def sign_out():
+    token = request.form.get("token")
+    if token is None:
+        return response(False, "incorrect token"), http.HTTPStatus.BAD_REQUEST
+    try:
+        tokens.remove(token)
+    except KeyError:
+        return response(False, "incorrect token"), http.HTTPStatus.BAD_REQUEST
+    return response(True, "signed out successfully"), http.HTTPStatus.NO_CONTENT
+
+
 def generate_access_token():
     access_token = secrets.token_hex(16)
+    tokens.add(access_token)
     return access_token
+
+
+def remove_access_token(token):
+    tokens.discard(token)
+    return
 
 
 def response(status, message, data=None):
