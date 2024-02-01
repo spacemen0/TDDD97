@@ -66,5 +66,29 @@ def update_password(conn: sqlite3.Connection, id: str, password: str) -> None:
     c.close()
 
 
+def create_message(
+    conn: sqlite3.Connection, sender: str, receiver: str, message: str
+) -> None:
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO messages VALUES (NULL, ?, ?, ?)",
+        (
+            sender,
+            receiver,
+            message,
+        ),
+    )
+    conn.commit()
+    c.close()
+
+
+def get_messages_by_receiver(conn: sqlite3.Connection, id: str) -> tuple | None:
+    c = conn.cursor()
+    c.execute("SELECT * FROM messages WHERE receiver = ?", (id,))
+    messages = c.fetchall()
+    c.close()
+    return messages
+
+
 def close_db(conn: sqlite3.Connection) -> None:
     conn.close()

@@ -1,4 +1,4 @@
-import http
+from markupsafe import escape
 import re
 from flask import Flask, json, request
 from database_helper import *
@@ -62,26 +62,18 @@ def sign_up():
     user = (email, password, firstname, familyname, gender, city, country)
     if get_user_by_email(conn.db, email) is None:
         uid = create_user(conn.db, user)
-        # token = generate_access_token(uid)
-        return (
-            craft_response(True, f"User Created with id {uid}")
-            # ,
-            # http.HTTPStatus.CREATED,
-        )
+        return craft_response(True, f"User Created with id {uid}")
+
     else:
         return craft_response(False, "User already exists")
-    # , http.HTTPStatus.CONFLICT
 
 
 @app.route("/sign_out", methods=["DELETE"])
 def sign_out():
     token = get_authorization_token(request)
     if token is None or not is_valid_token(token):
-        return (
-            craft_response(False, "Unauthorized - Invalid or missing token")
-            # ,
-            # http.HTTPStatus.UNAUTHORIZED,
-        )
+        return craft_response(False, "Unauthorized - Invalid or missing token")
+
     remove_token(token)
     return craft_response(True, "signed out successfully")
 
@@ -95,57 +87,93 @@ def change_password():
         return craft_response(False, "Please fill in all fields")
     token = get_authorization_token(request)
     if token is None or not is_valid_token(token):
-        return (
-            craft_response(False, "Unauthorized - Invalid or missing token")
-            # ,
-            # http.HTTPStatus.UNAUTHORIZED,
-        )
+        return craft_response(False, "Unauthorized - Invalid or missing token")
+
     uid = tokens[token]
     user = get_user_by_id(conn.db, uid)
     if user is None:
-        return (
-            craft_response(False, "User does not exist")
-            # ,
-            # http.HTTPStatus.INTERNAL_SERVER_ERROR,
-        )
+        return craft_response(False, "User does not exist")
+
     if old_password != user[2]:
-        return (
-            craft_response(False, "Incorrect password")
-            # ,
-            # http.HTTPStatus.UNAUTHORIZED,
-        )
+        return craft_response(False, "Incorrect password")
+
     if len(new_password) < 8:
-        return (
-            craft_response(False, "Password must be at least 8 characters long")
-            # ,
-            # http.HTTPStatus.BAD_REQUEST,
-        )
+        return craft_response(False, "Password must be at least 8 characters long")
+
     update_password(conn.db, uid, new_password)
-    return (
-        craft_response(True, "Password updated")
-        # ,
-        # http.HTTPStatus.OK,
-    )
+    return craft_response(True, "Password updated")
 
 
 @app.route("/get_user_data_by_token", methods=["GET"])
 def get_user_data_by_token():
     token = get_authorization_token(request)
     if token is None or not is_valid_token(token):
-        return (
-            craft_response(False, "Unauthorized - Invalid or missing token")
-            # ,
-            # http.HTTPStatus.UNAUTHORIZED,
-        )
+        return craft_response(False, "Unauthorized - Invalid or missing token")
     uid = tokens[token]
     user = get_user_by_id(conn.db, uid)
     if user is None:
-        return (
-            craft_response(False, "User does not exist")
-            # ,
-            # http.HTTPStatus.INTERNAL_SERVER_ERROR,
-        )
+        return craft_response(False, "User does not exist")
+    user = user[0:3] + user[4:]
     return craft_response(True, "Success", user)
+
+
+@app.route("/get_user_data_by_email/<email>", methods=["GET"])
+def get_user_data_by_email(email):
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return craft_response(False, "Unauthorized - Invalid or missing token")
+    email = escape(email)
+    user = get_user_by_email(conn.db, email)
+    if user is None:
+        return craft_response(False, "User does not exist")
+    user = user[0:3] + user[4:]
+    return craft_response(True, "Success", user)
+
+
+@app.route("/post_message", methods=["POST"])
+def post_message():
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return craft_response(False, "Unauthorized - Invalid or missing token")
+    uid = tokens[token]
+    data = request.get_json()
+    message = data.get("message")
+    email = data.get("email")
+    if message is None or message == "":
+        return craft_response(False, "empty message")
+    if email is None or email == "":
+        return craft_response(False, "empty email address")
+    user = get_user_by_email(conn.db, email)
+    if user is None:
+        return craft_response(False, "User does not exist")
+    create_message(conn.db, uid, user[0], message)
+    return craft_response(True, "OK")
+
+
+@app.route("/get_user_messages_by_token", methods=["GET"])
+def get_user_messages_by_token():
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return craft_response(False, "Unauthorized - Invalid or missing token")
+
+    uid = tokens[token]
+    messages = get_messages_by_receiver(conn.db, uid)
+    return craft_response(True, "Success", messages)
+
+
+@app.route("/get_user_messages_by_email/<email>", methods=["GET"])
+def get_user_messages_by_email(email):
+    token = get_authorization_token(request)
+    if token is None or not is_valid_token(token):
+        return craft_response(False, "Unauthorized - Invalid or missing token")
+
+    if email is None or email == "":
+        return craft_response(False, "empty email address")
+    user = get_user_by_email(conn.db, email)
+    if user is None:
+        return craft_response(False, "User does not exist")
+    messages = get_messages_by_receiver(conn.db, user[0])
+    return craft_response(True, "Success", messages)
 
 
 def generate_access_token(user_id):
