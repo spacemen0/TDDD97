@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="client.css">
+    <script src="client.js"></script>
+    <title>Twidder</title>
+</head>
+
+<body>
+    <div id="main">
+        <div id="left-container">
+            <div class="tabs active-tab" id="home">home</div>
+            <div class="tabs" id="browse">browse</div>
+            <div class="tabs" id="account">account</div>
+        </div>
+
+        <div id="right-container">
+            <nav>
+                <button onclick="showTab('home')">Home</button>
+                <button onclick="showTab('browse')">Browse</button>
+                <button onclick="showTab('account')">Account</button>
+            </nav>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -129,3 +129,12 @@ function login(event) {
     showMessageBox(errorMessage);
   }
 }
+
+function showTab(tabId) {
+  var tabs = document.getElementsByClassName("tabs");
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove("active-tab");
+  }
+
+  document.getElementById(tabId).classList.add("active-tab");
+}

@@ -128,3 +128,35 @@
           font-size: 20px;
           text-align: center;
       }
+
+      #left-container {
+          background-color: rgba(117, 149, 235, 0.925);
+          width: 480px;
+          height: 400px;
+          margin-right: 5px;
+          margin-top: 15%;
+      }
+
+      #left-container .tabs {
+          display: none;
+      }
+
+      #left-container .active-tab {
+          display: block;
+      }
+
+      #right-container {
+          width: 250px;
+          height: 400px;
+          margin-top: 15%;
+          background-color: rgba(117, 149, 235, 0.925);
+      }
+
+      #right-container nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-left: 20px;
+          margin-right: 20px;
+          margin-top: 5px;
+      }
