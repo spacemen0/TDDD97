@@ -1,0 +1,3 @@
+{
+  "python.analysis.extraPaths": ["./Lab3/twidder"]
+}
