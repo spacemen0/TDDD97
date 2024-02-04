@@ -67,7 +67,12 @@ def sign_up():
     user = (email, password, firstname, familyname, gender, city, country)
     if get_user_by_email(conn.db, email) is None:
         uid = create_user(conn.db, user)
-        return craft_response(True, f"User Created with id {uid}")
+        token = generate_access_token(uid)
+        response = app.make_response(
+            craft_response(True, f"User created with uid{uid}")
+        )
+        response.headers["Authorization"] = f"Bearer {token}"
+        return response
 
     else:
         return craft_response(False, "User already exists")

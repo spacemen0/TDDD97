@@ -1,3 +1,4 @@
+const server_url = "http://127.0.0.1:5000";
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
@@ -63,6 +64,17 @@ function closeMessageBox() {
   modal.style.display = "none";
 }
 
+function profileCallback(response, token) {
+  if (response.success) {
+    console.log(response.message);
+    if (token !== "") localStorage.setItem("token", token);
+    loadProfile();
+  } else {
+    let errorMessage = response.message;
+    showMessageBox(errorMessage);
+  }
+}
+
 function register(event) {
   event.preventDefault();
   if (!validateRegister()) {
@@ -86,17 +98,27 @@ function register(event) {
     city: city,
     country: country,
   };
-  console.log(dataObject);
-  let signUpResult = serverstub.signUp(dataObject);
 
-  if (signUpResult.success) {
-    console.log(signUpResult.message);
-    loadProfile();
-  } else {
-    let errorMessage = signUpResult.message;
-    showMessageBox(errorMessage);
-  }
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", server_url + "/sign_up", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      var responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      const authorizationHeader = xhr.getResponseHeader("Authorization");
+      let token = "";
+      if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
+        token = authorizationHeader.slice(7);
+      }
+      profileCallback(responseData, token);
+    }
+  };
+  var requestBody = JSON.stringify(dataObject);
+  xhr.send(requestBody);
 }
+
 function validateLogin() {
   let password = document.getElementById("password-login");
   if (password.value.length < 8) {
@@ -116,18 +138,29 @@ function login(event) {
 
   let email = document.getElementById("email-login").value;
   let password = document.getElementById("password-login").value;
+  let dataObject = {
+    email: email,
+    password: password,
+  };
 
-  let signInResult = serverstub.signIn(email, password);
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", server_url + "/sign_in", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
 
-  if (signInResult.success) {
-    console.log(signInResult.message);
-    localStorage.setItem("token", signInResult.data);
-    loadProfile();
-  } else {
-    let errorMessage = signInResult.message;
-    console.log(errorMessage);
-    showMessageBox(errorMessage);
-  }
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      var responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      const authorizationHeader = xhr.getResponseHeader("Authorization");
+      let token = "";
+      if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
+        token = authorizationHeader.slice(7);
+      }
+      profileCallback(responseData, token);
+    }
+  };
+  var requestBody = JSON.stringify(dataObject);
+  xhr.send(requestBody);
 }
 
 function showTab(tabId) {
