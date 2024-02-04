@@ -1,4 +1,4 @@
-const server_url = "http://127.0.0.1:5000";
+const server_url = "http://127.0.0.1:8000";
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
