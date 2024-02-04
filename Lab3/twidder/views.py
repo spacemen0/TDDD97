@@ -177,6 +177,7 @@ def get_user_messages_by_email(email):
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
 
+    email = escape(email)
     if email is None or email == "":
         return craft_response(False, "empty email address")
     user = get_user_by_email(conn.db, email)
