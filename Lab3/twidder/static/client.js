@@ -1,9 +1,10 @@
-const server_url = "http://127.0.0.1:8000";
-const socket_url = "ws://127.0.0.1:8000/sock";
+const server_url = "http://127.0.0.1:5000";
+const socket_url = "ws://127.0.0.1:5000/sock";
 let socket;
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
+    startWebsocket();
   } else {
     loadWelcome();
   }
@@ -69,6 +70,7 @@ function closeMessageBox() {
 function ManuallyLogOut() {
   localStorage.removeItem("token");
   loadWelcome();
+  socket.close();
 }
 
 function startWebsocket() {
@@ -76,7 +78,14 @@ function startWebsocket() {
   socket.addEventListener("message", (ev) => {
     if (ev.data === "Log Out") ManuallyLogOut();
   });
-  socket.send(localStorage.getItem("token"));
+  socket.onopen = (event) => {
+    intervalId = setInterval(() => {
+      socket.send(localStorage.getItem("token"));
+      if (!localStorage.getItem("token")) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+  };
 }
 
 function profileCallback(response, token) {
