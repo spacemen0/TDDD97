@@ -1,4 +1,6 @@
 const server_url = "http://127.0.0.1:8000";
+const socket_url = "ws://127.0.0.1:8000/sock";
+let socket;
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
@@ -64,11 +66,25 @@ function closeMessageBox() {
   modal.style.display = "none";
 }
 
+function ManuallyLogOut() {
+  localStorage.removeItem("token");
+  loadWelcome();
+}
+
+function startWebsocket() {
+  socket = new WebSocket(socket_url);
+  socket.addEventListener("message", (ev) => {
+    if (ev.data === "Log Out") ManuallyLogOut();
+  });
+  socket.send(localStorage.getItem("token"));
+}
+
 function profileCallback(response, token) {
   if (response.success) {
     console.log(response.message);
     if (token !== "") localStorage.setItem("token", token);
     loadProfile();
+    startWebsocket();
   } else {
     let errorMessage = response.message;
     showMessageBox(errorMessage);

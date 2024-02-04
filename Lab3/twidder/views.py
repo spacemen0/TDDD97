@@ -8,6 +8,7 @@ from twidder import app
 from .database_helper import *
 
 conn = threading.local()
+sock = Sock(app)
 tokens = {}
 
 
@@ -22,6 +23,15 @@ def static_file(filename):
     return app.send_static_file(filename)
 
 
+@sock.route("/sock")
+def check_logout(sock):
+    while True:
+        token = sock.receive()
+        if token not in tokens:
+            sock.send("Log Out")
+            sock.close()
+
+
 @app.route("/sign_in", methods=["POST"])
 def sign_in():
     data = request.get_json()
@@ -34,6 +44,9 @@ def sign_in():
     if password is None:
         return craft_response(False, "Please fill in all fields")
     if password == user[2]:
+        pre_token = find_token(user[0])
+        if pre_token is not None:
+            remove_token(pre_token)
         token = generate_access_token(user[0])
         response = app.make_response(craft_response(True, "User signed in"))
         response.headers["Authorization"] = f"Bearer {token}"
@@ -200,6 +213,13 @@ def remove_token(token):
 
 def is_valid_token(token):
     return token in tokens
+
+
+def find_token(id):
+    for token, uid in tokens.items():
+        if uid == id:
+            return token
+    return None
 
 
 def invalid_email(email):
