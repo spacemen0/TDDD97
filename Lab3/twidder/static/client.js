@@ -70,7 +70,7 @@ function closeMessageBox() {
 function ManuallyLogOut() {
   localStorage.removeItem("token");
   loadWelcome();
-  socket.close();
+  if (socket.readyState == 1) socket.close();
 }
 
 function startWebsocket() {
@@ -84,7 +84,7 @@ function startWebsocket() {
       if (!localStorage.getItem("token")) {
         clearInterval(intervalId);
       }
-    }, 1000);
+    }, 500);
   };
 }
 
