@@ -74,16 +74,17 @@ function ManuallyLogOut() {
 }
 
 function startWebsocket() {
+  if (!localStorage.getItem("token")) return;
   socket = new WebSocket(socket_url);
   socket.addEventListener("message", (ev) => {
     if (ev.data === "Log Out") ManuallyLogOut();
   });
   socket.onopen = (event) => {
     intervalId = setInterval(() => {
-      socket.send(localStorage.getItem("token"));
       if (!localStorage.getItem("token")) {
         clearInterval(intervalId);
       }
+      socket.send(localStorage.getItem("token"));
     }, 500);
   };
 }
