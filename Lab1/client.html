@@ -104,11 +104,7 @@
     <p id="search-feedback"></p> 
     
   </div>
-        
-
-
       </div>
-
       <div class="tabs" id="account">
         <div id="account-wrapper">
           <button id="signOutButton" onclick="signOut(event)">Sign Out</button>
@@ -119,29 +115,22 @@
               <label for="password">Old Password</label>
               <input type="password" id="oldPassword" name="oldpassword" minlength="8"  oninput="clearLoginValidity()" required>
             </div>
-    
             <div class="input-wrapper">
               <label for="password">New Password</label>
               <input type="password" id="password" name="password" minlength="8" oninput="clearRegisterValidity()" required>
             </div>
-  
             <div class="input-wrapper">
               <label for="repeat-psw">Repeat Password</label>
               <input type="password" id="repeat-psw" name="repeat-psw" minlength="8" oninput="clearRegisterValidity()" required >
             </div>
-            
             <input type="submit" value="confirm" />
-  
             <div id="message-section">
               <p id="change-message">placeholder</p>
             </div>
-
           </form>
         </div>
-      
       </div>
   </div>
-
   <div id="right-container">
       <nav>
           <button onclick="showTab('home'); loadUserInfo()">Home</button>
