@@ -50,17 +50,17 @@
 
                         <div class="input-wrapper">
                             <label for="oldPassword">Old Password</label>
-                            <input type="password" id="oldPassword" name="oldpassword" minlength="8"
-                                oninput="clearSelfValidity(e)" required>
+                            <input type="password" id="oldPassword" name="oldPassword" 
+                                oninput="clearOldPasswordValidity(event);" required>
                         </div>
                         <div class="input-wrapper">
                             <label for="password">New Password</label>
-                            <input type="password" id="password" name="password" minlength="8"
+                            <input type="password" id="password" name="password" 
                                 oninput="clearRegisterValidity()" required>
                         </div>
                         <div class="input-wrapper">
                             <label for="repeat-psw">Repeat Password</label>
-                            <input type="password" id="repeat-psw" name="repeat-psw" minlength="8"
+                            <input type="password" id="repeat-psw" name="repeat-psw" 
                                 oninput="clearRegisterValidity()" required>
                         </div>
                         <input type="submit" value="confirm">

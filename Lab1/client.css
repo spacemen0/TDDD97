@@ -48,6 +48,7 @@
       }
 
       #register-header {
+          margin:10px;
           text-align: center;
       }
 
@@ -156,22 +157,36 @@
       }
 
       .content {
-          margin-top: 20px;
+          margin-top: 10px;
           margin-left: 10px;
           margin-right: 10px;
-      }
 
-      #wall-wrapper {
-          width: 200px;
-          border: 1px solid #ccc;
-          padding: 10px;
       }
 
       #user-wrapper {
           width: 200px;
+          height:max-content;
           border: 1px solid #ccc;
           padding: 10px;
       }
+      #user-wrapper h3{
+        margin:5px;
+      }
+      .banner h3 {
+        margin:10px;
+      }
+
+        #wall-wrapper {
+    width: 200px;
+    height: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        overflow: scroll;
+        }
+        #wall {
+            padding: 0px;
+            list-style: none;
+        }   
 
       #right-container {
           width: 250px;

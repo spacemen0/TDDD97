@@ -29,10 +29,9 @@ function clearRegisterValidity() {
   password.setCustomValidity("");
   repeatPassword.setCustomValidity("");
 }
-function clearSelfValidity(e) {
-  let ele = e.target;
-  console.log(ele);
-  ele.setCustomValidity("");
+function clearOldPasswordValidity(event) {
+  let password = document.getElementById("oldPassword");
+  password.setCustomValidity("");
 }
 
 function validateRegister() {
@@ -146,9 +145,21 @@ function showTab(tabId) {
   document.getElementById(tabId).classList.add("active-tab");
 }
 
+function validateOldPassword() {
+  let password = document.getElementById("oldPassword");
+  if (password.value.length < 8) {
+    password.setCustomValidity("Password must be at least 8 characters long");
+    password.reportValidity();
+    return false;
+  } else {
+    password.setCustomValidity("");
+  }
+  return true;
+}
+
 function changePassword(event) {
   event.preventDefault();
-  if (!validateRegister()) {
+  if (!validateOldPassword() || !validateRegister()) {
     return false;
   }
   var token = JSON.parse(localStorage.getItem("token"));
@@ -211,9 +222,8 @@ function loadWall() {
     var wallList = document.getElementById("wall");
     wallList.innerHTML = "";
     wall.forEach(function (message) {
-      var li = document.createElement("li");
-      li.textContent = message.writer + ": " + message.content;
-      wallList.appendChild(li);
+      wallList.innerHTML +=
+        "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
   }
 }
@@ -276,7 +286,7 @@ function displayUser(user) {
     var messages = searchResult.data;
     var wallHTML = "<h3>Wall Messages:</h3><ul>";
     messages.forEach(function (message) {
-      wallHTML += "<li>" + message.writer + ": " + message.content + "</li>";
+      wallHTML += "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
     wallHTML += "</ul>";
     document.getElementById("search-feedback").innerHTML += wallHTML;
