@@ -286,15 +286,16 @@ function displayUser(user) {
     var messages = searchResult.data;
     var wallHTML = "<h3>Wall Messages:</h3><ul>";
     messages.forEach(function (message) {
-      wallHTML += "<li><p>" + message.writer + ": " + message.content + "</p></li>";
+      wallHTML += "<li>" + message.writer + ": " + message.content + "</li>";
     });
     wallHTML += "</ul>";
     document.getElementById("search-feedback").innerHTML += wallHTML;
 
     var postMessageForm = `
         <h3>Post a Message:</h3>
-        <textarea id="post-message" rows="4" cols="20"></textarea><br>
+        <textarea id="post-notes" rows="4" cols="20"></textarea><br>
         <button onclick="postOthersMessage()">Post</button>
+        <button onclick="reloadPost()">Reload</button>
     `;
     document.getElementById("search-feedback").innerHTML += postMessageForm;
   } else {
@@ -305,11 +306,11 @@ function displayUser(user) {
 
 function postOthersMessage() {
   var token = JSON.parse(localStorage.getItem("token"));
-  var message = document.getElementById("post-message").value.trim();
+  var message = document.getElementById("post-notes").value;
   if (message !== "") {
     var email = document.getElementById("searching-email").value;
     var posted = serverstub.postMessage(token, message, email);
-
+    
     if (posted.success) {
     } else {
       showMessageBox(postResult.message);
@@ -317,4 +318,8 @@ function postOthersMessage() {
   } else {
     showMessageBox("Please enter a message.");
   }
+}
+
+function reloadPost(){
+   browseUser();
 }
