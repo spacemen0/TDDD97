@@ -284,11 +284,12 @@ function displayUser(user) {
   var searchResult = serverstub.getUserMessagesByEmail(token, user.email);
   if (searchResult.success) {
     var messages = searchResult.data;
-    var wallHTML = "<h3>Wall Messages:</h3><ul>";
+    var wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
     messages.forEach(function (message) {
-      wallHTML += "<li>" + message.writer + ": " + message.content + "</li>";
+      wallHTML +=
+        "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
-    wallHTML += "</ul>";
+    wallHTML += "</ul></div>";
     document.getElementById("search-feedback").innerHTML += wallHTML;
 
     var postMessageForm = `
@@ -310,8 +311,9 @@ function postOthersMessage() {
   if (message !== "") {
     var email = document.getElementById("searching-email").value;
     var posted = serverstub.postMessage(token, message, email);
-    
+
     if (posted.success) {
+      reloadPost();
     } else {
       showMessageBox(postResult.message);
     }
@@ -320,6 +322,6 @@ function postOthersMessage() {
   }
 }
 
-function reloadPost(){
-   browseUser();
+function reloadPost() {
+  browseUser();
 }
