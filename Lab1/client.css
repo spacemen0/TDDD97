@@ -1,0 +1,162 @@
+      #main {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+          justify-content: center;
+      }
+
+      body {
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+      }
+
+      #logo-wrapper {
+          width: 340px;
+          height: 400px;
+          margin-right: 5px;
+          margin-top: 15%;
+      }
+
+      #form-wrapper {
+          width: 250px;
+          height: 400px;
+          display: flex;
+          flex-direction: column;
+          margin-top: 15%;
+
+          gap: 5px;
+      }
+
+      #login-wrapper {
+          background: #1a9cbd;
+          flex: 0.2;
+          padding-bottom: 5px;
+      }
+
+      #register-wrapper {
+          background: #1a9cbd;
+          flex: 0.8;
+      }
+
+      #form-wrapper form {
+          padding-top: 5px;
+          text-align: right;
+      }
+
+      #register-header {
+          text-align: center;
+      }
+
+      .input-wrapper {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          padding-left: 3px;
+          padding-right: 3px;
+      }
+
+      .input-wrapper input {
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+          border: none;
+          width: 130px;
+      }
+
+      select {
+          background: linear-gradient(90deg,
+                  rgb(49, 49, 224) 0%,
+                  rgba(0, 212, 255, 1) 100%);
+          border: none;
+      }
+
+      select:focus-visible {
+          outline-style: none;
+      }
+
+      option {
+          background: #25a0c2;
+          border: none;
+      }
+
+      input[type="submit"] {
+          border: none;
+          margin-top: 10px;
+          margin-right: 3px;
+          background: #94baf3;
+      }
+
+      input[type="submit"]:hover {
+          border: none;
+          background-color: #0eb8e7;
+      }
+
+      input[value="signup"] {
+          margin-top: 8px;
+      }
+
+      #message-box {
+          display: none;
+          position: fixed;
+          top: 40%;
+          left: 40%;
+          width: 20%;
+          height: 20%;
+          background-color: rgba(117, 149, 235, 0.925);
+          justify-content: center;
+          align-items: center;
+          z-index: 1;
+      }
+
+
+      .close {
+          position: relative;
+          top: 0px;
+          right: 0px;
+          font-size: 20px;
+          line-height: 15px;
+          cursor: pointer;
+      }
+
+      #message-text {
+          margin-top: 20%;
+          font-size: 20px;
+          text-align: center;
+      }
+
+      #left-container {
+          background-color: rgba(117, 149, 235, 0.925);
+          width: 480px;
+          height: 400px;
+          margin-right: 5px;
+          margin-top: 15%;
+      }
+
+      #left-container .tabs {
+          display: none;
+      }
+
+      #left-container .active-tab {
+          display: block;
+      }
+
+      #right-container {
+          width: 250px;
+          height: 400px;
+          margin-top: 15%;
+          background-color: rgba(117, 149, 235, 0.925);
+      }
+
+      #right-container nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-left: 20px;
+          margin-right: 20px;
+          margin-top: 5px;
+      }
