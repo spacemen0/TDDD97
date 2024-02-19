@@ -77,7 +77,7 @@
     </div>
   </div>
     </script>
-  <script type="text/view" id="profile">
+ <script type="text/view" id="profile">
         <div id="left-container">
             <div class="tabs active-tab" id="home">
                 <div class="banner">
@@ -100,14 +100,28 @@
             </div>
 
             <div class="tabs" id="browse">
-                <h2>Browse Users</h2>
+              <div class="banner">
+                <h3>Browse Users</h3>
+              </div> 
                 <div id="search-user">
                     <input type="email" id="searching-email" placeholder="Enter user email">
                     <button onclick="browseUser()">Search</button>
-                    <p id="search-feedback"></p>
+                    <div class="content">
+                      <div class="user-wrapper">
+                          <p id="search-feedback"></p>
+                      </div>
+
+                      <div class="wall-wrapper">
+                           <p id='otherwall'></p>
+                      </div>
+ 
+
+                    </div>
 
                 </div>
             </div>
+
+
             <div class="tabs" id="account">
                 <div id="account-wrapper">
                     <button id="signOutButton" onclick="signOut(event)">Sign Out</button>
