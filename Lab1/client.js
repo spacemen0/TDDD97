@@ -284,21 +284,23 @@ function displayUser(user) {
   var searchResult = serverstub.getUserMessagesByEmail(token, user.email);
   if (searchResult.success) {
     var messages = searchResult.data;
+
+    var postMessageForm = `
+    <h3>Post a Message:</h3>
+    <textarea id="post-notes" rows="4" cols="20"></textarea><br>
+    <button onclick="postOthersMessage()">Post</button>
+    <button onclick="reloadPost()">Reload</button>
+`;
+    document.getElementById("search-feedback").innerHTML += postMessageForm;
+
     var wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
     messages.forEach(function (message) {
       wallHTML +=
         "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
     wallHTML += "</ul></div>";
-    document.getElementById("search-feedback").innerHTML += wallHTML;
-
-    var postMessageForm = `
-        <h3>Post a Message:</h3>
-        <textarea id="post-notes" rows="4" cols="20"></textarea><br>
-        <button onclick="postOthersMessage()">Post</button>
-        <button onclick="reloadPost()">Reload</button>
-    `;
-    document.getElementById("search-feedback").innerHTML += postMessageForm;
+    document.getElementById("otherwall").innerHTML = wallHTML;
+    
   } else {
     document.getElementById("search-feedback").innerHTML +=
       "<p>No messages found on this user's wall.</p>";
