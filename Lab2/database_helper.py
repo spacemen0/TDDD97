@@ -5,6 +5,7 @@ def init_db() -> sqlite3.Connection:
     conn = sqlite3.connect("database.db")
     create_user_table(conn)
     create_message_table(conn)
+    create_token_table(conn)
     return conn
 
 
@@ -26,6 +27,7 @@ def create_message_table(conn: sqlite3.Connection) -> None:
     )
     conn.commit()
     c.close()
+
 
 def create_token_table(conn: sqlite3.Connection) -> None:
     c = conn.cursor()
@@ -98,17 +100,27 @@ def get_messages_by_receiver(conn: sqlite3.Connection, id: str) -> tuple | None:
     c.close()
     return messages
 
-def issue_token(conn: sqlite3.Connection, id:str,token,str) -> None:
+
+def issue_token(conn: sqlite3.Connection, id: int, token: str) -> None:
     c = conn.cursor()
     c.execute(
-        "INSERT INTO tokens VALUES (NULL, ?,  ?)",
+        "INSERT INTO tokens VALUES (?, ?)",
         (
-           id,
-token
+            id,
+            token,
         ),
     )
     conn.commit()
     c.close()
+
+
+def get_all_tokens(conn: sqlite3.Connection) -> tuple:
+    c = conn.cursor()
+    c.execute("SELECT * FROM tokens")
+    tokens = c.fetchall()
+    c.close()
+    return tokens
+
 
 def close_db(conn: sqlite3.Connection) -> None:
     conn.close()
