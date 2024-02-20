@@ -73,8 +73,9 @@ function closeMessageBox() {
   modal.style.display = "none";
 }
 
-function ManuallyLogOut() {
+function ForceSignOut() {
   localStorage.removeItem("token");
+  console.log("ForceSignOut");
   loadWelcome();
   if (socket.readyState == 1) socket.close();
 }
@@ -83,14 +84,15 @@ function startWebsocket() {
   if (!localStorage.getItem("token")) return;
   socket = new WebSocket(socket_url);
   socket.addEventListener("message", (ev) => {
-    if (ev.data === "Log Out") ManuallyLogOut();
+    if (ev.data === "Log Out") ForceSignOut();
   });
   socket.onopen = (event) => {
     intervalId = setInterval(() => {
       if (!localStorage.getItem("token")) {
         clearInterval(intervalId);
       }
-      socket.send(localStorage.getItem("token"));
+      if (socket.readyState == 1)
+        socket.send(localStorage.getItem("token"));
     }, 500);
   };
 }
@@ -99,7 +101,7 @@ function profileCallback(response, token, load = false) {
   if (response.success) {
     showMessageBox(response.message);
     if (token !== "") localStorage.setItem("token", token);
-    if (load) loadProfile();
+    if (load) { loadProfile(); startWebsocket(); };
   } else {
     let errorMessage = response.message;
     showMessageBox(errorMessage);
@@ -219,7 +221,7 @@ function changePassword(event) {
   if (!validateOldPassword() || !validateRegister()) {
     return false;
   }
-  let token = JSON.parse(localStorage.getItem("token"));
+  let token = localStorage.getItem("token");
   let oldPassword = document.getElementById("oldPassword").value;
   let newPassword = document.getElementById("password").value;
 
@@ -287,7 +289,7 @@ function loadUserInfo() {
 }
 
 function loadWall() {
-  let token = JSON.parse(localStorage.getItem("token"));
+  let token = localStorage.getItem("token");
   let wallInfo = serverstub.getUserMessagesByToken(token);
   if (wallInfo.success) {
     let wall = wallInfo.data;
@@ -303,7 +305,7 @@ function loadWall() {
 function postMessage() {
   let message = document.getElementById("post-message").value.trim();
   if (message !== "") {
-    let token = JSON.parse(localStorage.getItem("token"));
+    let token = localStorage.getItem("token");
     let postResult = serverstub.postMessage(token, message);
     if (postResult.success) {
       loadWall();
@@ -322,7 +324,7 @@ function reloadWall() {
 
 function browseUser() {
   let userEmail = document.getElementById("searching-email").value;
-  let token = JSON.parse(localStorage.getItem("token"));
+  let token = localStorage.getItem("token");
   let userData = serverstub.getUserDataByEmail(token, userEmail);
 
   if (userData.success) {
@@ -352,7 +354,7 @@ function displayUser(user) {
     "<br>" +
     "<strong>Country:</strong> " +
     user.country;
-  let token = JSON.parse(localStorage.getItem("token"));
+  let token = localStorage.getItem("token");
   let searchResult = serverstub.getUserMessagesByEmail(token, user.email);
   if (searchResult.success) {
     let messages = searchResult.data;
@@ -379,7 +381,7 @@ function displayUser(user) {
 }
 
 function postOthersMessage() {
-  let token = JSON.parse(localStorage.getItem("token"));
+  let token = localStorage.getItem("token");
   let message = document.getElementById("post-notes").value;
   if (message !== "") {
     let email = document.getElementById("searching-email").value;
