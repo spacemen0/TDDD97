@@ -10,9 +10,9 @@ def generate_access_token(user_id):
     return access_token
 
 
-
 generate_access_token(2)
-generate_access_token(3)
+token = generate_access_token(3)
+delete_token(conn=conn, token=token)
 
 tokens = get_all_tokens(conn=conn)
 print(tokens)

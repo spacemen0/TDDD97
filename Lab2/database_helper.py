@@ -114,6 +114,29 @@ def issue_token(conn: sqlite3.Connection, id: int, token: str) -> None:
     c.close()
 
 
+def delete_token(conn: sqlite3.Connection, token: str) -> None:
+    c = conn.cursor()
+    c.execute(
+        "DELETE FROM tokens WHERE token = ?",
+        (token,),
+    )
+    conn.commit()
+    c.close()
+
+
+def get_token_id(conn: sqlite3.Connection, token: str) -> int | None:
+    c = conn.cursor()
+    c.execute(
+        "SELECT id FROM tokens WHERE token = ?",
+        (token,),
+    )
+    id = c.fetchone()
+    c.close()
+    if id is None:
+        return None
+    return id[0]
+
+
 def get_all_tokens(conn: sqlite3.Connection) -> tuple:
     c = conn.cursor()
     c.execute("SELECT * FROM tokens")
