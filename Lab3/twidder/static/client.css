@@ -48,6 +48,7 @@
       }
 
       #register-header {
+          margin:10px;
           text-align: center;
       }
 
@@ -142,8 +143,50 @@
       }
 
       #left-container .active-tab {
-          display: block;
+          display: flex;
+          flex-direction: column;
       }
+
+      #left-container .banner {
+          text-align: center;
+      }
+
+      #left-container .content {
+          display: flex;
+          justify-content: space-between;
+      }
+
+      .content {
+          margin-top: 10px;
+          margin-left: 10px;
+          margin-right: 10px;
+
+      }
+
+      #user-wrapper {
+          width: 200px;
+          height:max-content;
+          border: 1px solid #ccc;
+          padding: 10px;
+      }
+      #user-wrapper h3{
+        margin:5px;
+      }
+      .banner h3 {
+        margin:10px;
+      }
+
+        #wall-wrapper {
+    width: 200px;
+    height: 250px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        overflow: scroll;
+        }
+        #wall {
+            padding: 0px;
+            list-style: none;
+        }   
 
       #right-container {
           width: 250px;
