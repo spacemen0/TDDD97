@@ -21,7 +21,7 @@ function loadProfile() {
   let profile = document.getElementById("profile");
   main.innerHTML = profile.innerHTML;
   loadUserInfo();
-  reloadWall();
+  loadWall();
 }
 function clearLoginValidity() {
   let password = document.getElementById("password-login");
@@ -257,10 +257,6 @@ function signOut(event) {
   xhr.send();
 }
 
-function displayMessage(message, method) {
-  let messageElement = document.getElementById(method + "-message");
-  messageElement.textContent = message;
-}
 
 function loadUserInfo() {
   let token = localStorage.getItem("token");
@@ -318,9 +314,6 @@ function postMessage() {
   }
 }
 
-function reloadWall() {
-  loadWall();
-}
 
 function browseUser() {
   let userEmail = document.getElementById("searching-email").value;
@@ -330,9 +323,14 @@ function browseUser() {
   if (userData.success) {
     displayUser(userData.data);
   } else {
-    document.getElementById("search-feedback").textContent = userData.message;
+    showMessageBox(userData.message);
     clearBrowseData();
   }
+}
+
+function clearBrowseData() {
+  document.getElementById("search-feedback").innerHTML = "";
+  document.getElementsByClassName("wall-wrapper")[0].innerHTML = "";
 }
 
 function displayUser(user) {
@@ -373,6 +371,7 @@ function displayUser(user) {
         "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
     wallHTML += "</ul></div>";
+    document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
     document.getElementById("otherwall").innerHTML = wallHTML;
   } else {
     document.getElementById("search-feedback").innerHTML +=
@@ -388,7 +387,7 @@ function postOthersMessage() {
     let posted = serverstub.postMessage(token, message, email);
 
     if (posted.success) {
-      reloadPost();
+      browseUser();
     } else {
       showMessageBox(postResult.message);
     }
@@ -397,6 +396,3 @@ function postOthersMessage() {
   }
 }
 
-function reloadPost() {
-  browseUser();
-}

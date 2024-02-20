@@ -17,7 +17,7 @@ function loadProfile() {
   let profile = document.getElementById("profile");
   main.innerHTML = profile.innerHTML;
   loadUserInfo();
-  reloadWall();
+  loadWall();
 }
 function clearLoginValidity() {
   let password = document.getElementById("password-login");
@@ -57,15 +57,15 @@ function validateRegister() {
 }
 
 function showMessageBox(message) {
-  var modal = document.getElementById("message-box");
-  var messageText = document.getElementById("message-text");
+  let modal = document.getElementById("message-box");
+  let messageText = document.getElementById("message-text");
 
   messageText.textContent = message;
   modal.style.display = "block";
 }
 
 function closeMessageBox() {
-  var modal = document.getElementById("message-box");
+  let modal = document.getElementById("message-box");
   modal.style.display = "none";
 }
 
@@ -137,8 +137,8 @@ function login(event) {
 }
 
 function showTab(tabId) {
-  var tabs = document.getElementsByClassName("tabs");
-  for (var i = 0; i < tabs.length; i++) {
+  let tabs = document.getElementsByClassName("tabs");
+  for (let i = 0; i < tabs.length; i++) {
     tabs[i].classList.remove("active-tab");
   }
 
@@ -162,18 +162,18 @@ function changePassword(event) {
   if (!validateOldPassword() || !validateRegister()) {
     return false;
   }
-  var token = JSON.parse(localStorage.getItem("token"));
-  var oldPassword = document.getElementById("oldPassword").value;
-  var newPassword = document.getElementById("password").value;
+  let token = JSON.parse(localStorage.getItem("token"));
+  let oldPassword = document.getElementById("oldPassword").value;
+  let newPassword = document.getElementById("password").value;
 
-  var changeResult = serverstub.changePassword(token, oldPassword, newPassword);
+  let changeResult = serverstub.changePassword(token, oldPassword, newPassword);
   showMessageBox(changeResult.message);
 }
 
 function signOut(event) {
   event.preventDefault();
-  var token = JSON.parse(localStorage.getItem("token"));
-  var signOutResult = serverstub.signOut(token);
+  let token = JSON.parse(localStorage.getItem("token"));
+  let signOutResult = serverstub.signOut(token);
   localStorage.setItem("token", "");
   console.log(token);
   if (signOutResult.success) {
@@ -183,16 +183,12 @@ function signOut(event) {
   }
 }
 
-function displayMessage(message, method) {
-  var messageElement = document.getElementById(method + "-message");
-  messageElement.textContent = message;
-}
 
 function loadUserInfo() {
-  var token = JSON.parse(localStorage.getItem("token"));
-  var userInfo = serverstub.getUserDataByToken(token);
+  let token = JSON.parse(localStorage.getItem("token"));
+  let userInfo = serverstub.getUserDataByToken(token);
   if (userInfo.success) {
-    var user = userInfo.data;
+    let user = userInfo.data;
     document.getElementById("user-info").innerHTML =
       "<strong>First Name:</strong> " +
       user.firstname +
@@ -215,11 +211,11 @@ function loadUserInfo() {
 }
 
 function loadWall() {
-  var token = JSON.parse(localStorage.getItem("token"));
-  var wallInfo = serverstub.getUserMessagesByToken(token);
+  let token = JSON.parse(localStorage.getItem("token"));
+  let wallInfo = serverstub.getUserMessagesByToken(token);
   if (wallInfo.success) {
-    var wall = wallInfo.data;
-    var wallList = document.getElementById("wall");
+    let wall = wallInfo.data;
+    let wallList = document.getElementById("wall");
     wallList.innerHTML = "";
     wall.forEach(function (message) {
       wallList.innerHTML +=
@@ -229,10 +225,10 @@ function loadWall() {
 }
 
 function postMessage() {
-  var message = document.getElementById("post-message").value.trim();
+  let message = document.getElementById("post-message").value.trim();
   if (message !== "") {
-    var token = JSON.parse(localStorage.getItem("token"));
-    var postResult = serverstub.postMessage(token, message);
+    let token = JSON.parse(localStorage.getItem("token"));
+    let postResult = serverstub.postMessage(token, message);
     if (postResult.success) {
       loadWall();
       document.getElementById("post-message").value = "";
@@ -244,21 +240,23 @@ function postMessage() {
   }
 }
 
-function reloadWall() {
-  loadWall();
-}
 
 function browseUser() {
-  var userEmail = document.getElementById("searching-email").value;
-  var token = JSON.parse(localStorage.getItem("token"));
-  var userData = serverstub.getUserDataByEmail(token, userEmail);
+  let userEmail = document.getElementById("searching-email").value;
+  let token = JSON.parse(localStorage.getItem("token"));
+  let userData = serverstub.getUserDataByEmail(token, userEmail);
 
   if (userData.success) {
     displayUser(userData.data);
   } else {
-    document.getElementById("search-feedback").textContent = userData.message;
+    showMessageBox(userData.message);
     clearBrowseData();
   }
+}
+
+function clearBrowseData() {
+  document.getElementById("search-feedback").innerHTML = "";
+  document.getElementsByClassName("wall-wrapper")[0].innerHTML = "";
 }
 
 function displayUser(user) {
@@ -280,12 +278,12 @@ function displayUser(user) {
     "<br>" +
     "<strong>Country:</strong> " +
     user.country;
-  var token = JSON.parse(localStorage.getItem("token"));
-  var searchResult = serverstub.getUserMessagesByEmail(token, user.email);
+  let token = JSON.parse(localStorage.getItem("token"));
+  let searchResult = serverstub.getUserMessagesByEmail(token, user.email);
   if (searchResult.success) {
-    var messages = searchResult.data;
+    let messages = searchResult.data;
 
-    var postMessageForm = `
+    let postMessageForm = `
     <h3>Post a Message:</h3>
     <textarea id="post-notes" rows="4" cols="20"></textarea><br>
     <button onclick="postOthersMessage()">Post</button>
@@ -293,12 +291,13 @@ function displayUser(user) {
 `;
     document.getElementById("search-feedback").innerHTML += postMessageForm;
 
-    var wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
+    let wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
     messages.forEach(function (message) {
       wallHTML +=
         "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
     wallHTML += "</ul></div>";
+    document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
     document.getElementById("otherwall").innerHTML = wallHTML;
 
   } else {
@@ -308,14 +307,14 @@ function displayUser(user) {
 }
 
 function postOthersMessage() {
-  var token = JSON.parse(localStorage.getItem("token"));
-  var message = document.getElementById("post-notes").value;
+  let token = JSON.parse(localStorage.getItem("token"));
+  let message = document.getElementById("post-notes").value;
   if (message !== "") {
-    var email = document.getElementById("searching-email").value;
-    var posted = serverstub.postMessage(token, message, email);
+    let email = document.getElementById("searching-email").value;
+    let posted = serverstub.postMessage(token, message, email);
 
     if (posted.success) {
-      reloadPost();
+      browseUser();
     } else {
       showMessageBox(postResult.message);
     }
@@ -324,6 +323,3 @@ function postOthersMessage() {
   }
 }
 
-function reloadPost() {
-  browseUser();
-}
