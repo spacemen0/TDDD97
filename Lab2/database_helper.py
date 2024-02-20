@@ -27,6 +27,15 @@ def create_message_table(conn: sqlite3.Connection) -> None:
     conn.commit()
     c.close()
 
+def create_token_table(conn: sqlite3.Connection) -> None:
+    c = conn.cursor()
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS tokens
+                 (id INTEGER PRIMARY KEY , token TEXT)"""
+    )
+    conn.commit()
+    c.close()
+
 
 def create_user(conn: sqlite3.Connection, user: tuple) -> int:
     c = conn.cursor()
@@ -89,6 +98,17 @@ def get_messages_by_receiver(conn: sqlite3.Connection, id: str) -> tuple | None:
     c.close()
     return messages
 
+def issue_token(conn: sqlite3.Connection, id:str,token,str) -> None:
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO tokens VALUES (NULL, ?,  ?)",
+        (
+           id,
+token
+        ),
+    )
+    conn.commit()
+    c.close()
 
 def close_db(conn: sqlite3.Connection) -> None:
     conn.close()

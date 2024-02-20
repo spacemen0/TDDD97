@@ -167,7 +167,7 @@ function changePassword(event) {
   var newPassword = document.getElementById("password").value;
 
   var changeResult = serverstub.changePassword(token, oldPassword, newPassword);
-  displayMessage(changeResult.message, "change");
+  showMessageBox(changeResult.message);
 }
 
 function signOut(event) {
@@ -179,7 +179,7 @@ function signOut(event) {
   if (signOutResult.success) {
     loadWelcome();
   } else {
-    displayMessage(signOutResult.message, "change");
+    showMessageBox(signOutResult.message);
   }
 }
 
@@ -300,7 +300,7 @@ function displayUser(user) {
     });
     wallHTML += "</ul></div>";
     document.getElementById("otherwall").innerHTML = wallHTML;
-    
+
   } else {
     document.getElementById("search-feedback").innerHTML +=
       "<p>No messages found on this user's wall.</p>";

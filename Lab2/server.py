@@ -19,7 +19,7 @@ def before_request():
 @app.route("/sign_in", methods=["POST"])
 def sign_in():
     data = request.get_json()
-    username = data.get("email")
+    username = data.get("username")
     password = data.get("password")
 
     user = get_user_by_email(conn.db, username)
@@ -29,8 +29,8 @@ def sign_in():
         return craft_response(False, "Please fill in all fields")
     if password == user[2]:
         token = generate_access_token(user[0])
-        response = app.make_response(craft_response(True, "User signed in"))
-        response.headers["Authorization"] = f"Bearer {token}"
+        response = app.make_response(craft_response(True, "User signed in",token))
+        
         return response
     else:
         return craft_response(False, "Incorrect username or password")
@@ -70,7 +70,7 @@ def sign_up():
 
 @app.route("/sign_out", methods=["DELETE"])
 def sign_out():
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization")
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
 
@@ -78,14 +78,14 @@ def sign_out():
     return craft_response(True, "signed out successfully")
 
 
-@app.route("/change_password", methods=["POST"])
+@app.route("/change_password", methods=["PUT"])
 def change_password():
     data = request.get_json()
-    old_password = data.get("old_password")
-    new_password = data.get("new_password")
+    old_password = data.get("oldpassword")
+    new_password = data.get("newpassword")
     if any(field is None or field == "" for field in [old_password, new_password]):
         return craft_response(False, "Please fill in all fields")
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization")
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
 
@@ -106,7 +106,7 @@ def change_password():
 
 @app.route("/get_user_data_by_token", methods=["GET"])
 def get_user_data_by_token():
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization")
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
     uid = tokens[token]
@@ -119,7 +119,7 @@ def get_user_data_by_token():
 
 @app.route("/get_user_data_by_email/<email>", methods=["GET"])
 def get_user_data_by_email(email):
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization")
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
     email = escape(email)
@@ -132,7 +132,7 @@ def get_user_data_by_email(email):
 
 @app.route("/post_message", methods=["POST"])
 def post_message():
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization")
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
     uid = tokens[token]
@@ -152,7 +152,7 @@ def post_message():
 
 @app.route("/get_user_messages_by_token", methods=["GET"])
 def get_user_messages_by_token():
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization") 
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
 
@@ -163,7 +163,7 @@ def get_user_messages_by_token():
 
 @app.route("/get_user_messages_by_email/<email>", methods=["GET"])
 def get_user_messages_by_email(email):
-    token = get_authorization_token(request)
+    token = request.headers.get("Authorization")
     if token is None or not is_valid_token(token):
         return craft_response(False, "Unauthorized - Invalid or missing token")
 
