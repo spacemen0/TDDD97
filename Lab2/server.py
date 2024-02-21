@@ -176,6 +176,9 @@ def get_user_messages_by_email(email):
 
 
 def generate_access_token(user_id):
+    previous_token = get_token_by_id(conn.db, user_id)
+    if previous_token is not None:
+        delete_token(conn.db, previous_token)
     access_token = secrets.token_hex(16)
     issue_token(conn.db, user_id, access_token)
     return access_token

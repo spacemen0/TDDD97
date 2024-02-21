@@ -141,9 +141,7 @@ function register(event) {
       console.log(responseData);
       const authorizationHeader = xhr.getResponseHeader("Authorization");
       let token = "";
-      if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
-        token = authorizationHeader.slice(7);
-      }
+      token = authorizationHeader;
       profileCallback(responseData, token);
     }
   };
@@ -171,7 +169,7 @@ function login(event) {
   let password = document.getElementById("password-login").value;
 
   let dataObject = {
-    email: email,
+    username: email,
     password: password,
   };
 
@@ -183,11 +181,8 @@ function login(event) {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      const authorizationHeader = xhr.getResponseHeader("Authorization");
       let token = "";
-      if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
-        token = authorizationHeader.slice(7);
-      }
+      token = responseData.data;
       profileCallback(responseData, token, true);
     }
   };
@@ -245,7 +240,7 @@ function signOut(event) {
   let xhr = new XMLHttpRequest();
   xhr.open("DELETE", server_url + "/sign_out", true);
   let token = localStorage.getItem("token");
-  xhr.setRequestHeader("Authorization", "Bearer " + token);
+  xhr.setRequestHeader("Authorization", token);
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {

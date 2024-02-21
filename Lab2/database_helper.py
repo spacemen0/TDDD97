@@ -137,6 +137,19 @@ def get_token_id(conn: sqlite3.Connection, token: str) -> int | None:
     return id[0]
 
 
+def get_token_by_id(conn: sqlite3.Connection, id: int) -> str:
+    c = conn.cursor()
+    c.execute(
+        "SELECT token FROM tokens WHERE id = ?",
+        (id,),
+    )
+    token = c.fetchone()
+    c.close()
+    if token is None:
+        return None
+    return token[0]
+
+
 def get_all_tokens(conn: sqlite3.Connection) -> tuple:
     c = conn.cursor()
     c.execute("SELECT * FROM tokens")

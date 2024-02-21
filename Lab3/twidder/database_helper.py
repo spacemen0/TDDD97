@@ -2,9 +2,10 @@ import sqlite3
 
 
 def init_db() -> sqlite3.Connection:
-    conn = sqlite3.connect("twidder/database.db")
+    conn = sqlite3.connect("database.db")
     create_user_table(conn)
     create_message_table(conn)
+    create_token_table(conn)
     return conn
 
 
@@ -23,6 +24,16 @@ def create_message_table(conn: sqlite3.Connection) -> None:
     c.execute(
         """CREATE TABLE IF NOT EXISTS messages
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT)"""
+    )
+    conn.commit()
+    c.close()
+
+
+def create_token_table(conn: sqlite3.Connection) -> None:
+    c = conn.cursor()
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS tokens
+                 (id INTEGER PRIMARY KEY , token TEXT)"""
     )
     conn.commit()
     c.close()
@@ -88,6 +99,63 @@ def get_messages_by_receiver(conn: sqlite3.Connection, id: str) -> tuple | None:
     messages = c.fetchall()
     c.close()
     return messages
+
+
+def issue_token(conn: sqlite3.Connection, id: int, token: str) -> None:
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO tokens VALUES (?, ?)",
+        (
+            id,
+            token,
+        ),
+    )
+    conn.commit()
+    c.close()
+
+
+def delete_token(conn: sqlite3.Connection, token: str) -> None:
+    c = conn.cursor()
+    c.execute(
+        "DELETE FROM tokens WHERE token = ?",
+        (token,),
+    )
+    conn.commit()
+    c.close()
+
+
+def get_token_by_id(conn: sqlite3.Connection, id: int) -> str:
+    c = conn.cursor()
+    c.execute(
+        "SELECT token FROM tokens WHERE id = ?",
+        (id,),
+    )
+    token = c.fetchone()
+    c.close()
+    if token is None:
+        return None
+    return token[0]
+
+
+def get_token_id(conn: sqlite3.Connection, token: str) -> int | None:
+    c = conn.cursor()
+    c.execute(
+        "SELECT id FROM tokens WHERE token = ?",
+        (token,),
+    )
+    id = c.fetchone()
+    c.close()
+    if id is None:
+        return None
+    return id[0]
+
+
+def get_all_tokens(conn: sqlite3.Connection) -> tuple:
+    c = conn.cursor()
+    c.execute("SELECT * FROM tokens")
+    tokens = c.fetchall()
+    c.close()
+    return tokens
 
 
 def close_db(conn: sqlite3.Connection) -> None:
