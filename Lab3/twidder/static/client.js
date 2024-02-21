@@ -76,6 +76,7 @@ function closeMessageBox() {
 function ForceSignOut() {
   localStorage.removeItem("token");
   console.log("ForceSignOut");
+  showMessageBox("Someone else signed in to your account, you have been signed out")
   loadWelcome();
   if (socket.readyState == 1) socket.close();
 }
