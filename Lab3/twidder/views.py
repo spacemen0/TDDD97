@@ -10,6 +10,7 @@ import threading
 sock = Sock(app)
 
 conn = threading.local()
+socks = {}
 
 
 @app.before_request
@@ -24,12 +25,11 @@ def static_file(filename):
 
 
 @sock.route("/sock")
-def check_logout(sock):
+def check_logout(sock: Sock):
     while True:
         token = sock.receive()
-        if token is None or not get_token_id(conn.db, token):
-            sock.send("Log Out")
-            sock.close()
+        if get_token_id(conn.db, token):
+            socks[token] = sock
 
 
 @app.route("/sign_in", methods=["POST"])
@@ -44,6 +44,10 @@ def sign_in():
     if password is None:
         return craft_response(False, "Please fill in all fields")
     if password == user[2]:
+        previous_token = get_token_by_id(conn.db, user[0])
+        if previous_token:
+            socks[previous_token].send("Log Out")
+            delete_token(conn.db, previous_token)
         token = generate_access_token(user[0])
         response = app.make_response(craft_response(True, "User signed in", token))
 
@@ -193,9 +197,6 @@ def get_user_messages_by_email(email):
 
 
 def generate_access_token(user_id):
-    previous_token = get_token_by_id(conn.db, user_id)
-    if previous_token is not None:
-        delete_token(conn.db, previous_token)
     access_token = secrets.token_hex(16)
     issue_token(conn.db, user_id, access_token)
     return access_token

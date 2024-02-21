@@ -87,15 +87,10 @@ function startWebsocket() {
     if (ev.data === "Log Out") ForceSignOut();
   });
   socket.onopen = (event) => {
-    intervalId = setInterval(() => {
-      if (!localStorage.getItem("token")) {
-        clearInterval(intervalId);
-      }
-      if (socket.readyState == 1)
-        socket.send(localStorage.getItem("token"));
-    }, 500);
+    if (socket.readyState == 1)
+      socket.send(localStorage.getItem("token"));
   };
-}
+};
 
 function profileCallback(response, token, load = false) {
   if (response.success) {
