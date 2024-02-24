@@ -1,8 +1,7 @@
-import http
 from markupsafe import escape
 from flask_sock import Sock
 from flask import render_template, request
-from twidder.database_helper import *
+from twidder.database_helper_psql import *
 from twidder import app
 import threading
 
@@ -43,6 +42,8 @@ def sign_in():
         return craft_response("Missing fields", 400)
 
     user = get_user_by_email(conn.db, username)
+
+    print(user)
 
     if user is None:
         return craft_response("User not exist", 401)
@@ -186,11 +187,12 @@ def get_user_messages_by_token():
     uid = get_token_id(conn.db, token)
     if token is None or uid is None:
         return craft_response("Invalid or missing token", 401)
-    messages = get_messages_by_receiver(conn.db, uid)
-    for i in range(len(messages)):
-        email = get_user_by_id(conn.db, messages[i][1])[1]
-        content = messages[i][3]
-        messages[i] = {"writer": email, "content": content}
+    messages = get_messages_by_receiver(conn.db, str(uid))
+    if messages is not None:
+        for i in range(len(messages)):
+            email = get_user_by_id(conn.db, messages[i][1])[1]
+            content = messages[i][3]
+            messages[i] = {"writer": email, "content": content}
     return craft_response("Success", 200, messages)
 
 
@@ -203,11 +205,12 @@ def get_user_messages_by_email(email):
     user = get_user_by_email(conn.db, email)
     if user is None:
         return craft_response("User not exist", 404)
-    messages = get_messages_by_receiver(conn.db, user[0])
-    for i in range(len(messages)):
-        email = get_user_by_id(conn.db, messages[i][1])[1]
-        content = messages[i][3]
-        messages[i] = {"writer": email, "content": content}
+    messages = get_messages_by_receiver(conn.db, str(user[0]))
+    if messages is not None:
+        for i in range(len(messages)):
+            email = get_user_by_id(conn.db, messages[i][1])[1]
+            content = messages[i][3]
+            messages[i] = {"writer": email, "content": content}
     return craft_response("Success", 200, messages)
 
 

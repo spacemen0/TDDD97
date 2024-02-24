@@ -3,12 +3,14 @@ import secrets
 
 from flask import jsonify
 
-from twidder.database_helper import issue_token
+from twidder.database_helper_psql import issue_token
 from twidder import app
 
 
 def generate_access_token(conn, user_id):
     access_token = secrets.token_hex(16)
+    print(user_id)
+    print(access_token)
     issue_token(conn, user_id, access_token)
     return access_token
 

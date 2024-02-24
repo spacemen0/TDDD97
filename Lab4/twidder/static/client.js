@@ -139,7 +139,7 @@ function register(event) {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      registerCallback(responseData);
+      registerCallback(responseData, xhr.status);
     }
   };
   let requestBody = JSON.stringify(dataObject);
@@ -176,7 +176,7 @@ function loginCallback(response, status) {
       break;
     case "401":
       if (response.message == "User not exist")
-        showMessageBox("User not exist, you may enterer a wrong email");
+        showMessageBox("User not exist, you may entered a wrong email");
       else showMessageBox("Incorrect password, please try again");
       break;
     default:
@@ -385,10 +385,11 @@ function loadWallCallback(response, status) {
       let wall = response.data;
       let wallList = document.getElementById("wall");
       wallList.innerHTML = "";
-      wall.forEach(function (message) {
-        wallList.innerHTML +=
-          "<li><p>" + message.writer + ": " + message.content + "</p></li>";
-      });
+      if (wall != NaN)
+        wall.forEach(function (message) {
+          wallList.innerHTML +=
+            "<li><p>" + message.writer + ": " + message.content + "</p></li>";
+        });
       break;
     case "401":
       showMessageBox("Invalid or missing token");
