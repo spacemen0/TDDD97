@@ -23,42 +23,6 @@ function loadProfile() {
   loadUserInfo();
   loadWall();
 }
-function clearLoginValidity() {
-  let password = document.getElementById("password-login");
-  password.setCustomValidity("");
-}
-function clearRegisterValidity() {
-  let password = document.getElementById("password");
-  let repeatPassword = document.getElementById("repeat-psw");
-  password.setCustomValidity("");
-  repeatPassword.setCustomValidity("");
-}
-function clearOldPasswordValidity() {
-  let password = document.getElementById("oldPassword");
-  password.setCustomValidity("");
-}
-
-function validateRegister() {
-  let password = document.getElementById("password");
-  let repeatPassword = document.getElementById("repeat-psw");
-
-  if (password.value.length < 8) {
-    password.setCustomValidity("Password must be at least 8 characters long");
-    password.reportValidity();
-    return false;
-  } else {
-    password.setCustomValidity("");
-  }
-
-  if (password.value !== repeatPassword.value) {
-    repeatPassword.setCustomValidity("Passwords do not match");
-    repeatPassword.reportValidity();
-    return false;
-  } else {
-    repeatPassword.setCustomValidity("");
-  }
-  return true;
-}
 
 function showMessageBox(message) {
   let modal = document.getElementById("message-box");
@@ -93,14 +57,54 @@ function startWebsocket() {
   };
 };
 
-function profileCallback(response, token, load = false) {
-  if (response.success) {
-    showMessageBox(response.message);
-    if (token !== "") localStorage.setItem("token", token);
-    if (load) { loadProfile(); startWebsocket(); };
+function validateRegister() {
+  let password = document.getElementById("password");
+  let repeatPassword = document.getElementById("repeat-psw");
+
+  if (password.value.length < 8) {
+    password.setCustomValidity("Password must be at least 8 characters long");
+    password.reportValidity();
+    return false;
   } else {
-    let errorMessage = response.message;
-    showMessageBox(errorMessage);
+    password.setCustomValidity("");
+  }
+
+  if (password.value !== repeatPassword.value) {
+    repeatPassword.setCustomValidity("Passwords do not match");
+    repeatPassword.reportValidity();
+    return false;
+  } else {
+    repeatPassword.setCustomValidity("");
+  }
+  return true;
+}
+
+function clearRegisterValidity() {
+  let password = document.getElementById("password");
+  let repeatPassword = document.getElementById("repeat-psw");
+  password.setCustomValidity("");
+  repeatPassword.setCustomValidity("");
+}
+
+function registerCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "201":
+      showMessageBox("Sign up successfully");
+      break;
+    case "400":
+      if (response.message == "Missing fields")
+        showMessageBox("Please fill in all fields")
+      else if (response.message == "Invalid password")
+        showMessageBox("Password must be at least 8 digits")
+      else showMessageBox("Incorrect email format")
+      break
+    case "409":
+      showMessageBox("This email address has already be taken")
+      break
+    default:
+      showMessageBox("Internal server error")
+
   }
 }
 
@@ -135,15 +139,18 @@ function register(event) {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      const authorizationHeader = xhr.getResponseHeader("Authorization");
-      let token = "";
-      token = authorizationHeader;
-      profileCallback(responseData, token);
+      registerCallback(responseData);
     }
   };
   let requestBody = JSON.stringify(dataObject);
   xhr.send(requestBody);
 }
+
+function clearLoginValidity() {
+  let password = document.getElementById("password-login");
+  password.setCustomValidity("");
+}
+
 function validateLogin() {
   let password = document.getElementById("password-login");
   if (password.value.length < 8) {
@@ -155,6 +162,28 @@ function validateLogin() {
   }
   return true;
 }
+
+function loginCallback(response, status) {
+  status = status.toString();
+  switch (status) {
+    case "200":
+      showMessageBox("Log in successfully");
+      if (response.data !== "") localStorage.setItem("token", response.data);
+      loadProfile(); startWebsocket();
+      break;
+    case "400":
+      showMessageBox("Please fill in all fields");
+      break;
+    case "401":
+      if (response.message == "User not exist")
+        showMessageBox("User not exist, you may enterer a wrong email");
+      else showMessageBox("Incorrect password, please try again");
+      break;
+    default:
+      showMessageBox("Internal server error");
+  }
+}
+
 function login(event) {
   event.preventDefault();
   if (!validateLogin()) {
@@ -177,9 +206,7 @@ function login(event) {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      let token = "";
-      token = responseData.data;
-      profileCallback(responseData, token, true);
+      loginCallback(responseData, xhr.status);
     }
   };
   let requestBody = JSON.stringify(dataObject);
@@ -195,6 +222,11 @@ function showTab(tabId) {
   document.getElementById(tabId).classList.add("active-tab");
 }
 
+function clearOldPasswordValidity() {
+  let password = document.getElementById("oldPassword");
+  password.setCustomValidity("");
+}
+
 function validateOldPassword() {
   let password = document.getElementById("oldPassword");
   if (password.value.length < 8) {
@@ -207,14 +239,27 @@ function validateOldPassword() {
   return true;
 }
 
-function changePasswordCallback(response) {
-  if (response.success) {
-    showMessageBox(response.message);
-    localStorage.removeItem("token");
-    loadWelcome();
-  } else {
-    let errorMessage = response.message;
-    showMessageBox(errorMessage);
+function changePasswordCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "200":
+      showMessageBox("Password changed successfully");
+      localStorage.removeItem("token");
+      loadWelcome();
+      break;
+    case "400":
+      if (response.message == "Missing fields")
+        showMessageBox("Please fill in all fields");
+      else showMessageBox("New password must be at least 8 digits")
+      break;
+    case "401":
+      if (response.message == "User not exist")
+        showMessageBox("The user associated with your token does not exist");
+      else
+        showMessageBox("Invalid or missing token");
+      break;
+    default:
+      showMessageBox("Internal server error");
   }
 }
 
@@ -241,22 +286,27 @@ function changePassword(event) {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      changePasswordCallback(responseData);
+      changePasswordCallback(responseData, xhr.status);
     }
   };
   let requestBody = JSON.stringify(dataObject);
   xhr.send(requestBody);
 }
 
-function signOutCallback(response) {
-  if (response.success) {
-    showMessageBox(response.message);
-    localStorage.removeItem("token");
-    loadWelcome();
-    if (socket.readyState == 1) socket.close()
-  } else {
-    let errorMessage = response.message;
-    showMessageBox(errorMessage);
+function signOutCallback(status) {
+  status = status.toString()
+  switch (status) {
+    case "204":
+      showMessageBox("Signed out successfully");
+      localStorage.removeItem("token");
+      loadWelcome();
+      if (socket.readyState == 1) socket.close()
+      break;
+    case "401":
+      showMessageBox("Invalid or missing token");
+      break;
+    default:
+      showMessageBox("Internal server error");
   }
 }
 function signOut(event) {
@@ -269,39 +319,46 @@ function signOut(event) {
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
-      let responseData = JSON.parse(xhr.responseText);
-      console.log(responseData);
-      signOutCallback(responseData);
+      signOutCallback(xhr.status);
     }
   };
   xhr.send();
 }
 
-function loadUserCallback(response) {
-  if (response.success) {
-    let user = response.data;
-    localStorage.setItem("user", JSON.stringify(user));
-    document.getElementById("user-info").innerHTML =
-      "<strong>First Name:</strong> " +
-      user[2] +
-      "<br>" +
-      "<strong>Last Name:</strong> " +
-      user[3] +
-      "<br>" +
-      "<strong>Email:</strong> " +
-      user[1] +
-      "<br>" +
-      "<strong>Gender:</strong> " +
-      user[4] +
-      "<br>" +
-      "<strong>City:</strong> " +
-      user[5] +
-      "<br>" +
-      "<strong>Country:</strong> " +
-      user[6];
-  } else {
-    let errorMessage = response.message;
-    showMessageBox(errorMessage);
+function loadUserCallback(response, status) {
+
+  status = status.toString()
+  switch (status) {
+    case "200":
+      let user = response.data;
+      localStorage.setItem("user", JSON.stringify(user));
+      document.getElementById("user-info").innerHTML =
+        "<strong>First Name:</strong> " +
+        user[2] +
+        "<br>" +
+        "<strong>Last Name:</strong> " +
+        user[3] +
+        "<br>" +
+        "<strong>Email:</strong> " +
+        user[1] +
+        "<br>" +
+        "<strong>Gender:</strong> " +
+        user[4] +
+        "<br>" +
+        "<strong>City:</strong> " +
+        user[5] +
+        "<br>" +
+        "<strong>Country:</strong> " +
+        user[6];
+      break;
+    case "401":
+      if (response.message == "User not exist")
+        showMessageBox("The user associated with your token does not exist");
+      else
+        showMessageBox("Invalid or missing token");
+      break;
+    default:
+      showMessageBox("Internal server error");
   }
 }
 
@@ -315,23 +372,29 @@ function loadUserInfo() {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      loadUserCallback(responseData);
+      loadUserCallback(responseData, xhr.status);
     }
   };
   xhr.send();
 }
 
-function loadWallCallback(wallInfo) {
-  if (wallInfo.success) {
-    let wall = wallInfo.data;
-    let wallList = document.getElementById("wall");
-    wallList.innerHTML = "";
-    wall.forEach(function (message) {
-      wallList.innerHTML +=
-        "<li><p>" + message.writer + ": " + message.content + "</p></li>";
-    });
-  } else {
-    showMessageBox(wallInfo.message);
+function loadWallCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "200":
+      let wall = response.data;
+      let wallList = document.getElementById("wall");
+      wallList.innerHTML = "";
+      wall.forEach(function (message) {
+        wallList.innerHTML +=
+          "<li><p>" + message.writer + ": " + message.content + "</p></li>";
+      });
+      break;
+    case "401":
+      showMessageBox("Invalid or missing token");
+      break;
+    default:
+      showMessageBox("Internal server error");
   }
 }
 
@@ -345,18 +408,32 @@ function loadWall() {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      loadWallCallback(responseData);
+      loadWallCallback(responseData, xhr.status);
     }
   };
   xhr.send();
 }
 
-function postMessageCallback(postResult) {
-  if (postResult.success) {
-    loadWall();
-    document.getElementById("post-message").value = "";
-  } else {
-    showMessageBox(postResult.message);
+function postMessageCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "201":
+      loadWall();
+      document.getElementById("post-message").value = "";
+      break;
+    case "400":
+      if (response.message == "Empty message")
+        showMessageBox("You entered an empty message");
+      else showMessageBox("You entered an empty email address")
+      break;
+    case "401":
+      if (response.message == "User not exist")
+        showMessageBox("The user associated with your token does not exist");
+      else
+        showMessageBox("Invalid or missing token");
+      break;
+    default:
+      showMessageBox("Internal server error");
   }
 }
 function postMessage() {
@@ -377,7 +454,7 @@ function postMessage() {
       if (xhr.readyState == 4) {
         let responseData = JSON.parse(xhr.responseText);
         console.log(responseData);
-        postMessageCallback(responseData);
+        postMessageCallback(responseData, xhr.status);
       }
     };
     let requestBody = JSON.stringify(dataObject);
@@ -387,13 +464,23 @@ function postMessage() {
   }
 }
 
-function userDataCallback(userData) {
-
-  if (userData.success) {
-    displayUser(userData.data);
-  } else {
-    showMessageBox(userData.message);
-    clearBrowseData();
+function userDataCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "200":
+      displayUser(response.data);
+      break;
+    case "401":
+      showMessageBox("Invalid or missing token");
+      clearBrowseData();
+      break;
+    case "404":
+      showMessageBox("No such user")
+      clearBrowseData();
+      break
+    default:
+      showMessageBox("Internal server error");
+      clearBrowseData();
   }
 }
 
@@ -408,7 +495,7 @@ function browseUser() {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      userDataCallback(responseData);
+      userDataCallback(responseData, xhr.status);
     }
   };
   xhr.send();
@@ -421,29 +508,43 @@ function clearBrowseData() {
   document.getElementsByClassName("wall-wrapper")[0].innerHTML = "";
 }
 
-function searchResultCallback(searchResult) {
-  if (searchResult.success) {
-    let messages = searchResult.data;
+function searchResultCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "200":
+      let messages = response.data;
 
-    let postMessageForm = `
-    <h3>Post a Message:</h3>
-    <textarea id="post-notes" rows="4" cols="20"></textarea><br>
-    <button onclick="postOthersMessage()">Post</button>
-    <button onclick="reloadPost()">Reload</button>
-`;
-    document.getElementById("search-feedback").innerHTML += postMessageForm;
+      let postMessageForm = `
+      <h3>Post a Message:</h3>
+      <textarea id="post-notes" rows="4" cols="20"></textarea><br>
+      <button onclick="postOthersMessage()">Post</button>
+      <button onclick="reloadPost()">Reload</button>
+    `;
+      document.getElementById("search-feedback").innerHTML += postMessageForm;
 
-    let wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
-    messages.forEach(function (message) {
-      wallHTML +=
-        "<li><p>" + message.writer + ": " + message.content + "</p></li>";
-    });
-    wallHTML += "</ul></div>";
-    document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
-    document.getElementById("otherwall").innerHTML = wallHTML;
-  } else {
-    document.getElementById("search-feedback").innerHTML +=
-      "<p>No messages found on this user's wall.</p>";
+      let wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
+      messages.forEach(function (message) {
+        wallHTML +=
+          "<li><p>" + message.writer + ": " + message.content + "</p></li>";
+      });
+      wallHTML += "</ul></div>";
+      document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
+      document.getElementById("otherwall").innerHTML = wallHTML;
+      break;
+    case "401":
+      showMessageBox("Invalid or missing token");
+      document.getElementById("search-feedback").innerHTML +=
+        "<p>No messages found on this user's wall.</p>";
+      break;
+    case "404":
+      showMessageBox("No such user")
+      document.getElementById("search-feedback").innerHTML +=
+        "<p>No messages found on this user's wall.</p>";
+      break
+    default:
+      showMessageBox("Internal server error");
+      document.getElementById("search-feedback").innerHTML +=
+        "<p>No messages found on this user's wall.</p>";
   }
 }
 
@@ -475,18 +576,32 @@ function displayUser(user) {
     if (xhr.readyState == 4) {
       let responseData = JSON.parse(xhr.responseText);
       console.log(responseData);
-      searchResultCallback(responseData);
+      searchResultCallback(responseData, xhr.status);
     }
   };
   xhr.send();
 
 }
 
-function postOthersMessageCallback(postResult) {
-  if (postResult.success) {
-    browseUser();
-  } else {
-    showMessageBox(postResult.message);
+function postOthersMessageCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "201":
+      browseUser();
+      break;
+    case "400":
+      if (response.message == "Empty message")
+        showMessageBox("You entered an empty message");
+      else showMessageBox("You entered an empty email address")
+      break;
+    case "401":
+      if (response.message == "User not exist")
+        showMessageBox("The user associated with your token does not exist");
+      else
+        showMessageBox("Invalid or missing token");
+      break;
+    default:
+      showMessageBox("Internal server error");
   }
 }
 
@@ -509,7 +624,7 @@ function postOthersMessage() {
       if (xhr.readyState == 4) {
         let responseData = JSON.parse(xhr.responseText);
         console.log(responseData);
-        postOthersMessageCallback(responseData);
+        postOthersMessageCallback(responseData, xhr.status);
       }
     };
     let requestBody = JSON.stringify(dataObject);

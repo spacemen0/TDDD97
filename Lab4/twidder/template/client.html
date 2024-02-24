@@ -1,0 +1,168 @@
+<html>
+
+<head>
+  <link href="{{ url_for('static', filename='client.css') }}" type="text/css" rel="stylesheet">
+  <script src="{{ url_for('static', filename='client.js') }}" type="text/javascript"></script>
+  <script type=”text/view” id="welcome">
+  <div id="logo-wrapper">
+    <img src="{{ url_for('static', filename='wimage.png') }}" alt="Logo and Url">
+  </div>
+
+  <div id="form-wrapper">
+    <div id="login-wrapper">
+      <form id="login-form" onsubmit="login(event);">
+        <div class="input-wrapper">
+          <label for="email">Email</label>
+          <input type="email" id="email-login" name="email" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="password">Password</label>
+          <input type="password" id="password-login" oninput="clearLoginValidity()" required>
+        </div>
+
+        <input type="submit" value="login" />
+      </form>
+    </div>
+
+    <div id="register-wrapper">
+      <form id="register-form" onsubmit="register(event);">
+        <h3 id="register-header">Sign Up Here</h2>
+        <div class="input-wrapper">
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" name="first-name" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="family-name">Family Name</label>
+          <input type="text" id="family-name" name="family-name" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="country">Country</label>
+          <input type="text" id="country" name="country" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" oninput="clearRegisterValidity()" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="repeat-psw">Repeat-PSW</label>
+          <input type="password" id="repeat-psw" name="repeat-psw" oninput="clearRegisterValidity()" required>
+        </div>
+        <input type="submit" value="signup" />
+      </form>
+    </div>
+  </div>
+    </script>
+  <script type="text/view" id="profile">
+        <div id="left-container">
+            <div class="tabs active-tab" id="home">
+                <div class="banner">
+                    <h3>Welcome to your Home</h2>
+                </div>
+                <div class="content">
+                    <div id="user-wrapper">
+                        <h3>User Information:</h3>
+                        <div id="user-info"></div>
+                        <h3>Post a Message:</h3>
+                        <textarea id="post-message" rows="4" cols="20"></textarea><br>
+                        <button onclick="postMessage()">Post</button>
+                    </div>
+                    <div id="wall-wrapper">
+                        <h3>Your Wall:</h3>
+                        <ul id="wall"></ul>
+                        <button onclick="loadWall();">Reload Wall</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs" id="browse">
+              <div class="banner">
+                <h3>Browse Users</h3>
+              </div> 
+                <div id="search-user">
+                    <input type="email" id="searching-email" placeholder="Enter user email">
+                    <button onclick="browseUser()">Search</button>
+                    <div class="content">
+                      <div class="user-wrapper">
+                          <p id="search-feedback"></p>
+                      </div>
+
+                      <div class="wall-wrapper">
+                           <div id='otherwall'></div>
+                      </div>
+ 
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="tabs" id="account">
+                <div id="account-wrapper">
+                    <button id="signOutButton" onclick="signOut(event)">Sign Out</button>
+                    <form id="account-form" onsubmit="changePassword(event);">
+                        <h2 id="account-header">Change your password</h2>
+
+                        <div class="input-wrapper">
+                            <label for="oldPassword">Old Password</label>
+                            <input type="password" id="oldPassword" name="oldPassword" 
+                                oninput="clearOldPasswordValidity(event);" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="password">New Password</label>
+                            <input type="password" id="password" name="password" 
+                                oninput="clearRegisterValidity()" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="repeat-psw">Repeat Password</label>
+                            <input type="password" id="repeat-psw" name="repeat-psw" 
+                                oninput="clearRegisterValidity()" required>
+                        </div>
+                        <input type="submit" value="confirm">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="right-container">
+            <nav>
+                <button onclick="showTab('home'); loadUserInfo()">Home</button>
+                <button onclick="showTab('browse')">Browse</button>
+                <button onclick="showTab('account')">Account</button>
+            </nav>
+        </div>
+  </script>
+</head>
+
+<body>
+  <div id="main"></div>
+  <div id="message-box">
+    <span class="close" onclick="closeMessageBox()">&times;</span>
+    <p id="message-text">message box</p>
+  </div>
+</body>
+
+</html>

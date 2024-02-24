@@ -1,0 +1,7 @@
+Flask
+
+Gunicorn
+
+requests
+
+flask-sock
