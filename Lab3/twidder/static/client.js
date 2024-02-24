@@ -207,6 +207,17 @@ function validateOldPassword() {
   return true;
 }
 
+function changePasswordCallback(response) {
+  if (response.success) {
+    showMessageBox(response.message);
+    localStorage.removeItem("token");
+    loadWelcome();
+  } else {
+    let errorMessage = response.message;
+    showMessageBox(errorMessage);
+  }
+}
+
 function changePassword(event) {
   event.preventDefault();
   if (!validateOldPassword() || !validateRegister()) {
@@ -216,8 +227,25 @@ function changePassword(event) {
   let oldPassword = document.getElementById("oldPassword").value;
   let newPassword = document.getElementById("password").value;
 
-  let changeResult = serverstub.changePassword(token, oldPassword, newPassword);
-  displayMessage(changeResult.message, "change");
+  let dataObject = {
+    oldpassword: oldPassword,
+    newpassword: newPassword
+  }
+
+  let xhr = new XMLHttpRequest();
+  xhr.open("PUT", server_url + "/change_password", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("Authorization", token);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      changePasswordCallback(responseData);
+    }
+  };
+  let requestBody = JSON.stringify(dataObject);
+  xhr.send(requestBody);
 }
 
 function signOutCallback(response) {
@@ -248,36 +276,51 @@ function signOut(event) {
   xhr.send();
 }
 
-
-function loadUserInfo() {
-  let token = localStorage.getItem("token");
-  let userInfo = serverstub.getUserDataByToken(token);
-  if (userInfo.success) {
-    let user = userInfo.data;
+function loadUserCallback(response) {
+  if (response.success) {
+    let user = response.data;
+    localStorage.setItem("user", JSON.stringify(user));
     document.getElementById("user-info").innerHTML =
       "<strong>First Name:</strong> " +
-      user.firstname +
+      user[2] +
       "<br>" +
       "<strong>Last Name:</strong> " +
-      user.familyname +
+      user[3] +
       "<br>" +
       "<strong>Email:</strong> " +
-      user.email +
+      user[1] +
       "<br>" +
       "<strong>Gender:</strong> " +
-      user.gender +
+      user[4] +
       "<br>" +
       "<strong>City:</strong> " +
-      user.city +
+      user[5] +
       "<br>" +
       "<strong>Country:</strong> " +
-      user.country;
+      user[6];
+  } else {
+    let errorMessage = response.message;
+    showMessageBox(errorMessage);
   }
 }
 
-function loadWall() {
+function loadUserInfo() {
   let token = localStorage.getItem("token");
-  let wallInfo = serverstub.getUserMessagesByToken(token);
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", server_url + "/get_user_data_by_token", true);
+  xhr.setRequestHeader("Authorization", token);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      loadUserCallback(responseData);
+    }
+  };
+  xhr.send();
+}
+
+function loadWallCallback(wallInfo) {
   if (wallInfo.success) {
     let wall = wallInfo.data;
     let wallList = document.getElementById("wall");
@@ -286,30 +329,64 @@ function loadWall() {
       wallList.innerHTML +=
         "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
+  } else {
+    showMessageBox(wallInfo.message);
   }
 }
 
+function loadWall() {
+  let token = localStorage.getItem("token");
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", server_url + "/get_user_messages_by_token", true);
+  xhr.setRequestHeader("Authorization", token);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      loadWallCallback(responseData);
+    }
+  };
+  xhr.send();
+}
+
+function postMessageCallback(postResult) {
+  if (postResult.success) {
+    loadWall();
+    document.getElementById("post-message").value = "";
+  } else {
+    showMessageBox(postResult.message);
+  }
+}
 function postMessage() {
   let message = document.getElementById("post-message").value.trim();
+  let email = JSON.parse(localStorage.getItem("user"))[1];
+  let dataObject = {
+    email: email,
+    message, message
+  }
   if (message !== "") {
     let token = localStorage.getItem("token");
-    let postResult = serverstub.postMessage(token, message);
-    if (postResult.success) {
-      loadWall();
-      document.getElementById("post-message").value = "";
-    } else {
-      showMessageBox(postResult.message);
-    }
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", server_url + "/post_message", true);
+    xhr.setRequestHeader("Authorization", token);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4) {
+        let responseData = JSON.parse(xhr.responseText);
+        console.log(responseData);
+        postMessageCallback(responseData);
+      }
+    };
+    let requestBody = JSON.stringify(dataObject);
+    xhr.send(requestBody);
   } else {
     showMessageBox("Please enter a message.");
   }
 }
 
-
-function browseUser() {
-  let userEmail = document.getElementById("searching-email").value;
-  let token = localStorage.getItem("token");
-  let userData = serverstub.getUserDataByEmail(token, userEmail);
+function userDataCallback(userData) {
 
   if (userData.success) {
     displayUser(userData.data);
@@ -319,32 +396,31 @@ function browseUser() {
   }
 }
 
+function browseUser() {
+  let userEmail = document.getElementById("searching-email").value;
+  let token = localStorage.getItem("token");
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", server_url + "/get_user_data_by_email/" + userEmail, true);
+  xhr.setRequestHeader("Authorization", token);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      userDataCallback(responseData);
+    }
+  };
+  xhr.send();
+
+
+}
+
 function clearBrowseData() {
   document.getElementById("search-feedback").innerHTML = "";
   document.getElementsByClassName("wall-wrapper")[0].innerHTML = "";
 }
 
-function displayUser(user) {
-  document.getElementById("search-feedback").innerHTML =
-    "<strong>First Name:</strong> " +
-    user.firstname +
-    "<br>" +
-    "<strong>Last Name:</strong> " +
-    user.familyname +
-    "<br>" +
-    "<strong>Email:</strong> " +
-    user.email +
-    "<br>" +
-    "<strong>Gender:</strong> " +
-    user.gender +
-    "<br>" +
-    "<strong>City:</strong> " +
-    user.city +
-    "<br>" +
-    "<strong>Country:</strong> " +
-    user.country;
-  let token = localStorage.getItem("token");
-  let searchResult = serverstub.getUserMessagesByEmail(token, user.email);
+function searchResultCallback(searchResult) {
   if (searchResult.success) {
     let messages = searchResult.data;
 
@@ -370,20 +446,78 @@ function displayUser(user) {
   }
 }
 
+function displayUser(user) {
+  document.getElementById("search-feedback").innerHTML =
+    "<strong>First Name:</strong> " +
+    user[2] +
+    "<br>" +
+    "<strong>Last Name:</strong> " +
+    user[3] +
+    "<br>" +
+    "<strong>Email:</strong> " +
+    user[1] +
+    "<br>" +
+    "<strong>Gender:</strong> " +
+    user[4] +
+    "<br>" +
+    "<strong>City:</strong> " +
+    user[5] +
+    "<br>" +
+    "<strong>Country:</strong> " +
+    user[6];
+  let token = localStorage.getItem("token");
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", server_url + "/get_user_messages_by_email/" + user[1], true);
+  xhr.setRequestHeader("Authorization", token);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      searchResultCallback(responseData);
+    }
+  };
+  xhr.send();
+
+}
+
+function postOthersMessageCallback(postResult) {
+  if (postResult.success) {
+    browseUser();
+  } else {
+    showMessageBox(postResult.message);
+  }
+}
+
 function postOthersMessage() {
   let token = localStorage.getItem("token");
   let message = document.getElementById("post-notes").value;
+  let sent = false;
   if (message !== "") {
     let email = document.getElementById("searching-email").value;
-    let posted = serverstub.postMessage(token, message, email);
-
-    if (posted.success) {
-      browseUser();
-    } else {
-      showMessageBox(postResult.message);
+    let dataObject = {
+      email: email,
+      message: message
     }
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", server_url + "/post_message", true);
+    xhr.setRequestHeader("Authorization", token);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4) {
+        let responseData = JSON.parse(xhr.responseText);
+        console.log(responseData);
+        postOthersMessageCallback(responseData);
+      }
+    };
+    let requestBody = JSON.stringify(dataObject);
+    xhr.send(requestBody);
+    sent = true;
   } else {
-    showMessageBox("Please enter a message.");
+    if (!sent)
+      showMessageBox("Please enter a message.");
   }
+
 }
 

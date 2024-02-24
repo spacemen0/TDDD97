@@ -31,6 +31,7 @@ def check_logout(sock: Sock):
             socks[token] = sock
 
 
+
 @app.route("/sign_in", methods=["POST"])
 def sign_in():
     data = request.get_json()
@@ -44,9 +45,15 @@ def sign_in():
         return craft_response(False, "Please fill in all fields")
     if password == user[2]:
         previous_token = get_token_by_id(conn.db, user[0])
-        if previous_token:
-            socks[previous_token].send("Log Out")
+        if previous_token:  
             delete_token(conn.db, previous_token)
+        if socks.get(previous_token):
+            try:    
+                socks[previous_token].send("Log Out")
+                socks.pop(previous_token)
+            except:
+                print("Connection Closed")
+
         token = generate_access_token(conn.db, user[0])
         response = app.make_response(craft_response(True, "User signed in", token))
 
@@ -94,6 +101,8 @@ def sign_out():
         return craft_response(False, "Unauthorized - Invalid or missing token")
 
     delete_token(conn.db, token)
+    if socks.get(token):
+        socks.pop(token)
     return craft_response(True, "signed out successfully")
 
 
@@ -127,13 +136,12 @@ def change_password():
 def get_user_data_by_token():
     token = get_authorization_token(request)
     uid = get_token_id(conn.db, token)
-    print(f"token is {token} and uid is {uid}")
     if token is None or uid is None:
         return craft_response(False, "Unauthorized - Invalid or missing token")
     user = get_user_by_id(conn.db, uid)
     if user is None:
         return craft_response(False, "User does not exist")
-    user = user[0:3] + user[4:]
+    user = user[0:2] + user[3:]
     return craft_response(True, "Success", user)
 
 
@@ -146,7 +154,7 @@ def get_user_data_by_email(email):
     user = get_user_by_email(conn.db, email)
     if user is None:
         return craft_response(False, "User does not exist")
-    user = user[0:3] + user[4:]
+    user = user[0:2] + user[3:]
     return craft_response(True, "Success", user)
 
 
@@ -177,6 +185,13 @@ def get_user_messages_by_token():
     if token is None or uid is None:
         return craft_response(False, "Unauthorized - Invalid or missing token")
     messages = get_messages_by_receiver(conn.db, uid)
+    for i in range(len(messages)):
+        email = get_user_by_id(conn.db,messages[i][1])[1]
+        content = messages[i][3]
+        messages[i] = {
+            "writer":email,
+            "content":content
+        }
     return craft_response(True, "Success", messages)
 
 
@@ -192,6 +207,13 @@ def get_user_messages_by_email(email):
     if user is None:
         return craft_response(False, "User does not exist")
     messages = get_messages_by_receiver(conn.db, user[0])
+    for i in range(len(messages)):
+        email = get_user_by_id(conn.db,messages[i][1])[1]
+        content = messages[i][3]
+        messages[i] = {
+            "writer":email,
+            "content":content
+        }
     return craft_response(True, "Success", messages)
 
 
