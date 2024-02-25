@@ -20,9 +20,11 @@
           <label for="password">Password</label>
           <input type="password" id="password-login" oninput="clearLoginValidity()">
         </div>
-
-        <input type="submit" value="login" />
+        <div id="login-buttons-group"><input type="submit" value="login" />
+        <button type = "button" onclick = {loginGuest()}>guest</button>
         <button type="button" onclick = {recoverPassword()}>recover password</button>
+      </div>
+
       </form>
     </div>
 
@@ -106,6 +108,7 @@
                 <div id="search-user">
                     <input type="email" id="searching-email" placeholder="Enter user email">
                     <button onclick="browseUser()">Search</button>
+                    
                     <div class="content">
                       <div class="user-wrapper">
                           <p id="search-feedback"></p>

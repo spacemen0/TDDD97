@@ -673,3 +673,27 @@ function recoverPassword() {
   let requestBody = JSON.stringify(dataObject);
   xhr.send(requestBody);
 }
+
+function loginGuest() {
+  let email = "guest@email.com";
+  let password = "guestpassword";
+
+  let dataObject = {
+    username: email,
+    password: password,
+  };
+
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", server_url + "/sign_in", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      loginCallback(responseData, xhr.status);
+    }
+  };
+  let requestBody = JSON.stringify(dataObject);
+  xhr.send(requestBody);
+}

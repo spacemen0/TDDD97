@@ -37,6 +37,25 @@
           padding-bottom: 5px;
       }
 
+      #login-buttons-group {
+          display: flex;
+          justify-content: space-between;
+          padding-left: 4px;
+          padding-right: 4px;
+      }
+
+      #login-buttons-group button {
+          height: 24px;
+          margin-top: 10px;
+          background: #94baf3;
+          border: none;
+      }
+
+      #login-buttons-group button:hover {
+          border: none;
+          background-color: #0eb8e7;
+      }
+
       #register-wrapper {
           background: #1a9cbd;
           flex: 0.8;
@@ -88,7 +107,6 @@
       input[type="submit"] {
           border: none;
           margin-top: 10px;
-          margin-right: 3px;
           background: #94baf3;
       }
 
@@ -205,4 +223,24 @@
           margin-left: 20px;
           margin-right: 20px;
           margin-top: 5px;
+      }
+
+      #searching-email {
+          margin-left: 120px;
+      }
+
+      #account-wrapper {
+          padding-left: 10px;
+      }
+
+      #signOutButton {
+          margin-left: 380px;
+          margin-top: 10px;
+          background: #94baf3;
+          border: none;
+      }
+
+      #signOutButton:hover {
+          border: none;
+          background-color: #0eb8e7;
       }
