@@ -18,10 +18,11 @@
 
         <div class="input-wrapper">
           <label for="password">Password</label>
-          <input type="password" id="password-login" oninput="clearLoginValidity()" required>
+          <input type="password" id="password-login" oninput="clearLoginValidity()">
         </div>
 
         <input type="submit" value="login" />
+        <button type="button" onclick = {recoverPassword()}>recover password</button>
       </form>
     </div>
 

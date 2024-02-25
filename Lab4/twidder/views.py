@@ -1,10 +1,10 @@
 from markupsafe import escape
 from flask_sock import Sock
-from flask import render_template, request
-from twidder.database_helper_psql import *
-from twidder import app
+from flask import render_template, render_template_string, request
 import threading
-
+from twidder.database_helper_psql import *
+from twidder.config_reader import server_config
+from twidder import app
 from twidder.utils import *
 
 sock = Sock(app)
@@ -27,8 +27,35 @@ def index():
 def send_recover_email():
     data = request.get_json()
     email = data.get("email")
-    send_email(email,"just use your brain")
-    return craft_response("Not Allowed", 405)
+    user = get_user_by_email(conn.db, email)
+    if user is None:
+        return craft_response("User not exist", 404)
+    delete_url_token(conn.db, user[0])
+    content = email_template(
+        email, user[3], generate_url_token(conn.db, user[0], email)
+    )
+    send_email(email, content)
+    return craft_response("Success", 200)
+
+
+@app.route("/reset_password/<token>", methods=["PUT"])
+def reset_password(token):
+    data = request.get_json()
+    new_password = data.get("new_password")
+    if len(new_password) < 8:
+        return craft_response("Invalid password", 400)
+    info = validate_url_token(conn.db, token)
+    if info is None:
+        return craft_response("Incorrect token", 401)
+    update_password(conn.db, info[0], new_password)
+    delete_url_token(conn.db, info[0])
+    return craft_response("Success", 200)
+
+
+@app.route("/reset_password/<token>", methods=["GET"])
+def send_password_reset_form(token):
+    return render_template_string(reset_password_template(token))
+
 
 @sock.route("/sock")
 def check_logout(sock: Sock):
@@ -220,4 +247,4 @@ def get_user_messages_by_email(email):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=server_config()["port"])

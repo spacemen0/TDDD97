@@ -638,3 +638,38 @@ function postOthersMessage() {
 
 }
 
+function recoverPasswordCallback(response, status) {
+  status = status.toString()
+  switch (status) {
+    case "200":
+      showMessageBox("Password recovery email successfully sent, please check your mailbox")
+      break;
+    case "404":
+      showMessageBox("You entered an wrong email address")
+      break;
+    default:
+      showMessageBox("Internal server error");
+  }
+}
+
+function recoverPassword() {
+  let email = document.getElementById("email-login").value;
+
+  let dataObject = {
+    email: email
+  };
+
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", server_url + "/send_recover_email", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      recoverPasswordCallback(responseData, xhr.status);
+    }
+  };
+  let requestBody = JSON.stringify(dataObject);
+  xhr.send(requestBody);
+}

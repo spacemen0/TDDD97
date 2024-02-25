@@ -15,6 +15,7 @@ def init_db():
         create_user_table(conn)
         create_message_table(conn)
         create_token_table(conn)
+        create_url_token_table(conn)
         return conn
     except Error as e:
         print(f"Error while connecting to PostgreSQL: {e}")
@@ -78,6 +79,24 @@ def create_token_table(conn):
         cursor.close()
     except Error as e:
         print(f"Error while creating 'tokens' table: {e}")
+
+
+def create_url_token_table(conn):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS URLtokens (
+                id INTEGER PRIMARY KEY,
+                email TEXT,
+                token TEXT
+            )
+        """
+        )
+        conn.commit()
+        cursor.close()
+    except Error as e:
+        print(f"Error while creating 'URLtokens' table: {e}")
 
 
 def create_user(conn, user):
@@ -243,6 +262,51 @@ def get_all_tokens(conn):
     except Error as e:
         print(f"Error while fetching all tokens: {e}")
         return None
+    finally:
+        if cursor:
+            cursor.close()
+
+
+def register_url_token(conn, id, email, token):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO URLtokens (id, email, token) VALUES (%s, %s, %s)",
+            (
+                id,
+                email,
+                token,
+            ),
+        )
+        conn.commit()
+    except Error as e:
+        print(f"Error while registering URLtoken: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+
+
+def validate_url_token(conn, token):
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM URLtokens WHERE token = %s", (token,))
+        res = cursor.fetchone()
+        return res if res else None
+    except Error as e:
+        print(f"Error while validating URLtoken: {e}")
+        return None
+    finally:
+        if cursor:
+            cursor.close()
+
+
+def delete_url_token(conn, id):
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM URLtokens WHERE id = %s", (id,))
+        conn.commit()
+    except Error as e:
+        print(f"Error while deleting URLtoken: {e}")
     finally:
         if cursor:
             cursor.close()
