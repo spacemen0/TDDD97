@@ -652,9 +652,18 @@ function recoverPasswordCallback(response, status) {
   }
 }
 
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+
 function recoverPassword() {
   let email = document.getElementById("email-login").value;
-
+  if (!validateEmail(email)) {
+    showMessageBox("Please enter an valid email address")
+    return;
+  }
   let dataObject = {
     email: email
   };
