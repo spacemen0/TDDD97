@@ -1,15 +1,16 @@
 import psycopg2
 from psycopg2 import Error
+from twidder.config_reader import database_config
 
 
 def init_db():
     try:
         conn = psycopg2.connect(
-            dbname="DoubanEN",
-            user="soma",
-            password="haterswillsay",
-            host="127.0.0.1",
-            port="5432",
+            dbname=database_config()["dbname"],
+            user=database_config()["user"],
+            password=database_config()["password"],
+            host=database_config()["host"],
+            port=database_config()["port"],
         )
         create_user_table(conn)
         create_message_table(conn)

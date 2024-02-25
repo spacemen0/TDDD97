@@ -1,1 +1,5 @@
 flask
+Gunicorn
+pyyaml
+flask-sock
+psycopg2

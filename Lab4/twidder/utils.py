@@ -9,8 +9,6 @@ from twidder import app
 
 def generate_access_token(conn, user_id):
     access_token = secrets.token_hex(16)
-    print(user_id)
-    print(access_token)
     issue_token(conn, user_id, access_token)
     return access_token
 

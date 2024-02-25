@@ -2,8 +2,8 @@ Flask
 
 Gunicorn
 
-requests
-
 flask-sock
 
 psycopg2
+
+pyyaml

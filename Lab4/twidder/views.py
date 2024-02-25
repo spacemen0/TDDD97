@@ -43,8 +43,6 @@ def sign_in():
 
     user = get_user_by_email(conn.db, username)
 
-    print(user)
-
     if user is None:
         return craft_response("User not exist", 401)
     if password == user[2]:
