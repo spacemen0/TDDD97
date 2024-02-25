@@ -29,3 +29,6 @@ def craft_response(message, status_code, data=None):
     response = app.make_response(jsonify({"message": message, "data": data}))
     response.status_code = status_code
     return response
+
+def send_email(reciever,content):
+    pass

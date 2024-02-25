@@ -23,6 +23,13 @@ def index():
     return render_template("client.html")
 
 
+@app.route("/send_recover_email", methods=["POST"])
+def send_recover_email():
+    data = request.get_json()
+    email = data.get("email")
+    send_email(email,"just use your brain")
+    return craft_response("Not Allowed", 405)
+
 @sock.route("/sock")
 def check_logout(sock: Sock):
     while True:
