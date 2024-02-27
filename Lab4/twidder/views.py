@@ -250,4 +250,4 @@ def get_user_messages_by_email(email):
 
 
 if __name__ == "__main__":
-    app.run(port=server_config()["port"])
+    app.run(host=server_config()["host"],port=server_config()["port"])

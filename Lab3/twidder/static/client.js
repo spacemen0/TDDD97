@@ -210,8 +210,6 @@ function validateOldPassword() {
 function changePasswordCallback(response) {
   if (response.success) {
     showMessageBox(response.message);
-    localStorage.removeItem("token");
-    loadWelcome();
   } else {
     let errorMessage = response.message;
     showMessageBox(errorMessage);
