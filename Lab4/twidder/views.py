@@ -156,6 +156,9 @@ def change_password():
     user = get_user_by_id(conn.db, uid)
     if user is None:
         return craft_response("User not exist", 401)
+    
+    if user[1]=="guest@email.com":
+        return craft_response("Not Allowed", 401)
 
     if old_password != user[2]:
         return craft_response("Incorrect password", 401)

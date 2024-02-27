@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: twidder
-Version: 0.0.0
-Requires-Dist: flask
-Requires-Dist: Gunicorn
-Requires-Dist: pyyaml
-Requires-Dist: flask-sock
-Requires-Dist: psycopg2

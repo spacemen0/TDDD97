@@ -1,6 +1,7 @@
 const server_url = "http://127.0.0.1:5000";
 const socket_url = "ws://127.0.0.1:5000/sock";
 let socket;
+let guest = false;
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
@@ -255,6 +256,8 @@ function changePasswordCallback(response, status) {
     case "401":
       if (response.message == "User not exist")
         showMessageBox("The user associated with your token does not exist");
+      else if (response.message == "Not Allowed")
+        showMessageBox("You are logged in as a guest, changing password is not allowed");
       else
         showMessageBox("Invalid or missing token");
       break;
@@ -265,6 +268,10 @@ function changePasswordCallback(response, status) {
 
 function changePassword(event) {
   event.preventDefault();
+  if (guest) {
+    showMessageBox("You are logged in as a guest, changing password is not allowed");
+    return;
+  }
   if (!validateOldPassword() || !validateRegister()) {
     return false;
   }
@@ -519,7 +526,7 @@ function searchResultCallback(response, status) {
       <h3>Post a Message:</h3>
       <textarea id="post-notes" rows="4" cols="20"></textarea><br>
       <button onclick="postOthersMessage()">Post</button>
-      <button onclick="reloadPost()">Reload</button>
+      <button onclick="loadWall()">Reload</button>
     `;
       document.getElementById("search-feedback").innerHTML += postMessageForm;
 
@@ -705,4 +712,5 @@ function loginGuest() {
   };
   let requestBody = JSON.stringify(dataObject);
   xhr.send(requestBody);
+  guest = true;
 }
