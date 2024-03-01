@@ -714,3 +714,52 @@ function loginGuest() {
   xhr.send(requestBody);
   guest = true;
 }
+
+//geolocation
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    gotGeolocationCallback,
+    noGeolocationCallback);
+   
+
+} else {
+  
+  console.error("Geolocation is not supported by this browser.");
+  
+}
+
+function gotGeolocationCallback(position){
+
+const latitude = position.coords.latitude;
+const longitude = position.coords.longitude;
+console.log("Latitude:", latitude);
+console.log("Longitude:", longitude);
+
+const apiKey = '315762087673084502605x71996'; // Replace 'YOUR_API_KEY' with your actual API key
+
+const apiUrl = `https://geocode.xyz/${latitude},${longitude}?json=1&auth=${apiKey}`;
+
+
+fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      console.log("City:", data.city); 
+      console.log("Country:", data.country); 
+      console.log("Postal Code:", data.postal); 
+      console.log("Street Address:", data.staddress); 
+      console.log("Region:", data.region); 
+      console.log("State:", data.state); 
+      console.log("Elevation:", data.elevation); 
+  
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+}
+
+function noGeolocationCallback(error){
+
+  console.error("Error getting user's location:", error);
+      
+}

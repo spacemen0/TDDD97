@@ -6,6 +6,7 @@ def init_db() -> sqlite3.Connection:
     create_user_table(conn)
     create_message_table(conn)
     create_token_table(conn)
+    #create_location_table(conn)
     return conn
 
 
@@ -37,6 +38,15 @@ def create_token_table(conn: sqlite3.Connection) -> None:
     )
     conn.commit()
     c.close()
+
+#def create_location_table(conn: sqlite3.Connection) -> None:
+#   c = conn.cursor()
+#   c.execute(
+#       """CREATE TABLE IF NOT EXISTS locations
+#               (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT,latitude TEXT, longitude TEXT)"""
+#   )
+#   conn.commit()
+#  c.close()
 
 
 def create_user(conn: sqlite3.Connection, user: tuple) -> int:
@@ -160,3 +170,12 @@ def get_all_tokens(conn: sqlite3.Connection) -> tuple:
 
 def close_db(conn: sqlite3.Connection) -> None:
     conn.close()
+
+
+
+""" def creat_location(conn: sqlite3.Connection, location: tuple) -> None:
+    c = conn.cursor()
+    c.execute("INSERT INTO locations VALUES (NULL, ?, ?, ?)", location)
+    conn.commit()
+    c.close() """
+
