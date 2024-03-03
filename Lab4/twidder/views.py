@@ -204,7 +204,9 @@ def post_message():
         return craft_response("Invalid or missing token", 401)
     data = request.get_json()
     message = data.get("message")
-    email = data.get("email")
+    email = data.get( "email")
+    latitude=data.get("latitude")
+    longitude=data.get("longitude")
     if message is None or message == "":
         return craft_response("Empty message", 400)
     if email is None or email == "":
@@ -212,7 +214,7 @@ def post_message():
     user = get_user_by_email(conn.db, email)
     if user is None:
         return craft_response("User not exist", 401)
-    create_message(conn.db, uid, user[0], message)
+    create_message(conn.db, uid, user[0], message,latitude,longitude)
     return craft_response("Success", 201)
 
 
@@ -227,7 +229,9 @@ def get_user_messages_by_token():
         for i in range(len(messages)):
             email = get_user_by_id(conn.db, messages[i][1])[1]
             content = messages[i][3]
-            messages[i] = {"writer": email, "content": content}
+            latitude=messages[i][4]
+            longitude=messages[i][5]
+            messages[i] = {"writer": email, "content": content, latitude:"latitude", longitude:"longitude"}
     return craft_response("Success", 200, messages)
 
 
@@ -245,7 +249,9 @@ def get_user_messages_by_email(email):
         for i in range(len(messages)):
             email = get_user_by_id(conn.db, messages[i][1])[1]
             content = messages[i][3]
-            messages[i] = {"writer": email, "content": content}
+            latitude=messages[i][4]
+            longitude=messages[i][5]
+            messages[i] = {"writer": email, "content": content, latitude:"latitude", longitude:"longitude"}
     return craft_response("Success", 200, messages)
 
 

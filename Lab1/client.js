@@ -1,3 +1,9 @@
+let city;
+  let street;
+  let latitude;
+  let longitude;
+const apiKey = '315762087673084502605x71996'; 
+
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
@@ -210,7 +216,7 @@ function loadUserInfo() {
   }
 }
 
-function loadWall() {
+/* function loadWall() {
   let token = JSON.parse(localStorage.getItem("token"));
   let wallInfo = serverstub.getUserMessagesByToken(token);
   if (wallInfo.success) {
@@ -219,10 +225,52 @@ function loadWall() {
     wallList.innerHTML = "";
     wall.forEach(function (message) {
       wallList.innerHTML +=
+        "<li><p>" + message.writer + "from" + gotGeolocationCallback1(navigator.geolocation)+ ": " + message.content + "</p></li>";
+    });
+  }
+} */
+
+function loadWall() {
+  let token = JSON.parse(localStorage.getItem("token"));
+  let wallInfo = serverstub.getUserMessagesByToken(token);
+  if (wallInfo.success) {
+    let wall = wallInfo.data;
+    let wallList = document.getElementById("wall");
+    wallList.innerHTML = "";
+    displayWall(wall);
+  }
+}
+
+function displayWall(wall) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      gotGeolocationCallback1,
+      errorGeolocationCallback2);
+     
+  
+  } else {
+    
+    console.error("Geolocation is not supported by this browser.");
+    
+  }
+  const apiUrl = `https://geocode.xyz/${latitude},${longitude}?json=1&auth=${apiKey}`;
+   convertCoordinates(apiUrl);
+  let wallList = document.getElementById("wall");
+  if(city=="unknown"){
+    wall.forEach(function (message) {
+      wallList.innerHTML +=
         "<li><p>" + message.writer + ": " + message.content + "</p></li>";
     });
   }
+  else{
+  wall.forEach(function (message) {
+    wallList.innerHTML +=
+      "<li><p>" + message.writer +" from " +street+"," + city + ": " + message.content + "</p></li>";
+  });
 }
+}
+
+
 
 function postMessage() {
   let message = document.getElementById("post-message").value.trim();
@@ -279,6 +327,8 @@ function displayUser(user) {
     "<strong>Country:</strong> " +
     user.country;
   let token = JSON.parse(localStorage.getItem("token"));
+
+
   let searchResult = serverstub.getUserMessagesByEmail(token, user.email);
   if (searchResult.success) {
     let messages = searchResult.data;
@@ -294,7 +344,7 @@ function displayUser(user) {
     let wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
     messages.forEach(function (message) {
       wallHTML +=
-        "<li><p>" + message.writer + ": " + message.content + "</p></li>";
+        "<li><p>" + message.writer +" from "+street+" , "+city+ " : " + message.content + "</p></li>";
     });
     wallHTML += "</ul></div>";
     document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
@@ -323,3 +373,56 @@ function postOthersMessage() {
   }
 }
 
+ //geolocation
+/* if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    gotGeolocationCallback1,
+    errorGeolocationCallback2);
+   
+
+} else {
+  
+  console.error("Geolocation is not supported by this browser.");
+  
+} */
+
+function gotGeolocationCallback1(position){
+
+ latitude = position.coords.latitude;
+ longitude = position.coords.longitude;
+console.log("Latitude:", latitude);
+console.log("Longitude:", longitude);
+
+
+}
+
+
+
+function errorGeolocationCallback2(error){
+
+  console.error("Error getting user's location:", error);
+  city="unknown";
+      
+} 
+
+function convertCoordinates(apiUrl){
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      /* console.log("City:", data.city); 
+      console.log("Country:", data.country); 
+      console.log("Postal Code:", data.postal); 
+      console.log("Street Address:", data.staddress); 
+      console.log("Region:", data.region); 
+      console.log("State:", data.state); 
+      console.log("Elevation:", data.elevation);  */
+      city=data.region;
+      street=data.staddress;
+  
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      city="unknown";
+      street= "unknown";
+    });
+}
