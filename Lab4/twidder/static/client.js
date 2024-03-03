@@ -402,7 +402,7 @@ function loadWallCallback(response, status) {
          const apiUrl = `https://geocode.xyz/${ message.latitude},${message.longitude}?json=1&auth=${apiKey}`;
          convertCoordinates(apiUrl);
           wallList.innerHTML +=
-            "<li><p>" + message.writer +" from " +street+"," + city +  ": " + message.content + "</p></li>";
+          '<li><p draggable="true" ondragstart="drag(event)">' + message.writer +" from " +street+"," + city +  ": " + message.content + "</p></li>";
         });
       break;
     case "401":
@@ -533,7 +533,7 @@ function searchResultCallback(response, status) {
 
       let postMessageForm = `
       <h3>Post a Message:</h3>
-      <textarea id="post-notes" rows="4" cols="20"></textarea><br>
+      <textarea id="post-notes"  ondrop="drop(event)" ondragover="allowDrop(event)" rows="4" cols="20" ></textarea><br>
       <button onclick="postOthersMessage()">Post</button>
       <button onclick="loadWall()">Reload</button>
     `;
@@ -544,7 +544,7 @@ function searchResultCallback(response, status) {
       const apiUrl = `https://geocode.xyz/${message.latitude},${message.longitude}?json=1&auth=${apiKey}`;
       convertCoordinates(apiUrl);
       wallHTML +=
-          "<li><p>" + message.writer +" from " +street+"," + city +  ": " + message.content + "</p></li>";
+      '<li><p draggable="true" ondragstart="drag(event)">' + message.writer +" from " +street+"," + city +  ": " + message.content + "</p></li>";
       });
       wallHTML += "</ul></div>";
       document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
@@ -792,4 +792,18 @@ function convertCoordinates(apiUrl){
       city="unknown";
       street="unknown";
     });
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+}
+
+function drag(event) {
+  event.dataTransfer.setData("text", event.target.innerText);
+}
+
+function drop(event) {
+  event.preventDefault();
+  var data = event.dataTransfer.getData("text");
+  event.target.value = data;
 }

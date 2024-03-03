@@ -259,13 +259,14 @@ function displayWall(wall) {
   if(city=="unknown"){
     wall.forEach(function (message) {
       wallList.innerHTML +=
-        "<li><p>" + message.writer + ": " + message.content + "</p></li>";
+      '<li><p draggable="true" ondragstart="drag(event)">' + message.writer + ": " + message.content + "</p></li>";
+        
     });
   }
   else{
   wall.forEach(function (message) {
     wallList.innerHTML +=
-      "<li><p>" + message.writer +" from " +street+"," + city + ": " + message.content + "</p></li>";
+    '<li><p draggable="true" ondragstart="drag(event)">' + message.writer +" from " +street+"," + city + ": " + message.content + "</p></li>";
   });
 }
 }
@@ -335,7 +336,7 @@ function displayUser(user) {
 
     let postMessageForm = `
     <h3>Post a Message:</h3>
-    <textarea id="post-notes" rows="4" cols="20"></textarea><br>
+    <textarea id="post-notes" rows="4" cols="20" ondrop="drop(event)" ondragover="allowDrop(event)"></textarea><br>
     <button onclick="postOthersMessage()">Post</button>
     <button onclick="reloadPost()">Reload</button>
 `;
@@ -344,7 +345,7 @@ function displayUser(user) {
     let wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
     messages.forEach(function (message) {
       wallHTML +=
-        "<li><p>" + message.writer +" from "+street+" , "+city+ " : " + message.content + "</p></li>";
+      '<li><p draggable="true" ondragstart="drag(event)">'+ message.writer +" from "+street+" , "+city+ " : " + message.content + "</p></li>";
     });
     wallHTML += "</ul></div>";
     document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
@@ -425,4 +426,19 @@ function convertCoordinates(apiUrl){
       city="unknown";
       street= "unknown";
     });
+}
+
+
+function allowDrop(event) {
+  event.preventDefault();
+}
+
+function drag(event) {
+  event.dataTransfer.setData("text", event.target.innerText);
+}
+
+function drop(event) {
+  event.preventDefault();
+  var data = event.dataTransfer.getData("text");
+  event.target.value = data;
 }
