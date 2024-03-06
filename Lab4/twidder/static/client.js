@@ -394,10 +394,8 @@ function loadWallCallback(response, status) {
       wallList.innerHTML = "";
       if (wall != NaN)
         wall.forEach(function (message) {
-          const apiUrl = `https://geocode.xyz/${message.latitude},${message.longitude}?json=1&auth=${apiKey}`;
-          convertCoordinates(apiUrl);
           wallList.innerHTML +=
-            '<li><p draggable="true" ondragstart="drag(event)">' + message.writer + " from " + street + "," + city + ": " + message.content + "</p></li>";
+            "<li><p>" + message.writer + ": " + message.content + "</p></li>";
         });
       break;
     case "401":
@@ -451,9 +449,7 @@ function postMessage() {
   let email = JSON.parse(localStorage.getItem("user"))[1];
   let dataObject = {
     email: email,
-    message, message,
-    latitude, latitude,
-    longitude, longitude
+    message, message
   }
   if (message !== "") {
     let token = localStorage.getItem("token");
@@ -528,7 +524,7 @@ function searchResultCallback(response, status) {
 
       let postMessageForm = `
       <h3>Post a Message:</h3>
-      <textarea id="post-notes"  ondrop="drop(event)" ondragover="allowDrop(event)" rows="4" cols="20" ></textarea><br>
+      <textarea id="post-notes" rows="4" cols="20"></textarea><br>
       <button onclick="postOthersMessage()">Post</button>
       <button onclick="loadWall()">Reload</button>
     `;
@@ -536,10 +532,8 @@ function searchResultCallback(response, status) {
 
       let wallHTML = `<div id="wall-wrapper"><h3>Wall Messages:</h3><ul id="wall">`;
       messages.forEach(function (message) {
-        const apiUrl = `https://geocode.xyz/${message.latitude},${message.longitude}?json=1&auth=${apiKey}`;
-        convertCoordinates(apiUrl);
         wallHTML +=
-          '<li><p draggable="true" ondragstart="drag(event)">' + message.writer + " from " + street + "," + city + ": " + message.content + "</p></li>";
+          "<li><p>" + message.writer + ": " + message.content + "</p></li>";
       });
       wallHTML += "</ul></div>";
       document.getElementsByClassName("wall-wrapper")[0].innerHTML = "<div id='otherwall'></div>";
@@ -625,20 +619,9 @@ function postOthersMessage() {
   let sent = false;
   if (message !== "") {
     let email = document.getElementById("searching-email").value;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        gotGeolocationCallback1,
-        errorGeolocationCallback2);
-    } else {
-
-      console.error("Geolocation is not supported by this browser.");
-      showMessageBox("Geolocation is not supported by this browser.");
-    }
     let dataObject = {
       email: email,
-      message: message,
-      latitude: latitude,
-      longitude: longitude
+      message: message
     }
     let xhr = new XMLHttpRequest();
     xhr.open("POST", server_url + "/post_message", true);
