@@ -269,7 +269,6 @@ def post_message():
     user = get_user_by_email(conn.db, email)
     if user is None:
         return craft_response("User not exist", 401)
-    # insert message into database and returns status code created
     create_message(conn.db, uid, user[0], message)
     return craft_response("Success", 201)
 
@@ -289,7 +288,14 @@ def get_user_messages_by_token():
         for i in range(len(messages)):
             email = get_user_by_id(conn.db, messages[i][1])[1]
             content = messages[i][3]
-            messages[i] = {"writer": email, "content": content}
+            latitude = messages[i][4]
+            longitude = messages[i][5]
+            messages[i] = {
+                "writer": email,
+                "content": content,
+                latitude: "latitude",
+                longitude: "longitude",
+            }
     return craft_response("Success", 200, messages)
 
 
@@ -313,7 +319,14 @@ def get_user_messages_by_email(email):
         for i in range(len(messages)):
             email = get_user_by_id(conn.db, messages[i][1])[1]
             content = messages[i][3]
-            messages[i] = {"writer": email, "content": content}
+            latitude = messages[i][4]
+            longitude = messages[i][5]
+            messages[i] = {
+                "writer": email,
+                "content": content,
+                latitude: "latitude",
+                longitude: "longitude",
+            }
     return craft_response("Success", 200, messages)
 
 

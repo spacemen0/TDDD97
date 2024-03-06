@@ -60,7 +60,9 @@ def create_message_table(conn):
                 id SERIAL PRIMARY KEY,
                 sender TEXT,
                 receiver TEXT,
-                message TEXT
+                message TEXT,
+                latitude TEXT,
+                longitude TEXT,
             )
         """
         )
@@ -181,10 +183,10 @@ def create_message(conn, sender, receiver, message):
         cursor = conn.cursor()
         cursor.execute(
             """
-            INSERT INTO messages (sender, receiver, message)
-            VALUES (%s, %s, %s)
+            INSERT INTO messages (sender, receiver, message,latitude,longitude)
+            VALUES (%s, %s, %s, %s, %s)
         """,
-            (sender, receiver, message),
+            (sender, receiver, message, latitude, longitude),
         )
         conn.commit()
     except Error as e:

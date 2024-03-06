@@ -126,6 +126,8 @@ function register(event) {
     gender: gender,
     city: city,
     country: country,
+    latitude: latitude,
+    longitude: longitude,
   };
   let xhr = new XMLHttpRequest();
   xhr.open("POST", server_url + "/sign_up", true);
