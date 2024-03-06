@@ -1,5 +1,4 @@
 virtual
 **/__pycache__/
-**/twidder.egg-info/
-*.yaml
-*.db
+.yaml
+*.egg-info/

@@ -1,7 +1,7 @@
-const server_url = "http://127.0.0.1:5000";
-const socket_url = "ws://127.0.0.1:5000/sock";
+const server_url = "http://twidder4dorks.azurewebsites.net";
+const socket_url = "ws://twidder4dorks.azurewebsites.net/sock";
 let socket;
-let guest = false;
+// let guest = false;
 window.onload = function () {
   if (localStorage.getItem("token")) {
     loadProfile();
@@ -256,8 +256,8 @@ function changePasswordCallback(response, status) {
     case "401":
       if (response.message == "User not exist")
         showMessageBox("The user associated with your token does not exist");
-      else if (response.message == "Not Allowed")
-        showMessageBox("You are logged in as a guest, changing password is not allowed");
+      // else if (response.message == "Not Allowed")
+      //   showMessageBox("You are logged in as a guest, changing password is not allowed");
       else
         showMessageBox("Invalid or missing token");
       break;
@@ -268,10 +268,10 @@ function changePasswordCallback(response, status) {
 
 function changePassword(event) {
   event.preventDefault();
-  if (guest) {
-    showMessageBox("You are logged in as a guest, changing password is not allowed");
-    return;
-  }
+  // if (guest) {
+  //   showMessageBox("You are logged in as a guest, changing password is not allowed");
+  //   return;
+  // }
   if (!validateOldPassword() || !validateRegister()) {
     return false;
   }
@@ -676,7 +676,7 @@ function recoverPassword() {
   };
 
   let xhr = new XMLHttpRequest();
-  xhr.open("POST", server_url + "/send_recover_email", true);
+  xhr.open("POST", server_url + "/send_recover_email_with_password", true);
   xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onreadystatechange = function () {
@@ -690,76 +690,27 @@ function recoverPassword() {
   xhr.send(requestBody);
 }
 
-function loginGuest() {
-  let email = "guest@email.com";
-  let password = "guestpassword";
+// function loginGuest() {
+//   let email = "guest@email.com";
+//   let password = "guestpassword";
 
-  let dataObject = {
-    username: email,
-    password: password,
-  };
+//   let dataObject = {
+//     username: email,
+//     password: password,
+//   };
 
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", server_url + "/sign_in", true);
-  xhr.setRequestHeader("Content-Type", "application/json");
+//   let xhr = new XMLHttpRequest();
+//   xhr.open("POST", server_url + "/sign_in", true);
+//   xhr.setRequestHeader("Content-Type", "application/json");
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      let responseData = JSON.parse(xhr.responseText);
-      console.log(responseData);
-      loginCallback(responseData, xhr.status);
-    }
-  };
-  let requestBody = JSON.stringify(dataObject);
-  xhr.send(requestBody);
-  guest = true;
-}
-
-//geolocation
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(
-    gotGeolocationCallback,
-    noGeolocationCallback);
-   
-
-} else {
-  
-  console.error("Geolocation is not supported by this browser.");
-  
-}
-
-function gotGeolocationCallback(position){
-
-const latitude = position.coords.latitude;
-const longitude = position.coords.longitude;
-console.log("Latitude:", latitude);
-console.log("Longitude:", longitude);
-
-const apiKey = '315762087673084502605x71996'; // Replace 'YOUR_API_KEY' with your actual API key
-
-const apiUrl = `https://geocode.xyz/${latitude},${longitude}?json=1&auth=${apiKey}`;
-
-
-fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
-      console.log("City:", data.city); 
-      console.log("Country:", data.country); 
-      console.log("Postal Code:", data.postal); 
-      console.log("Street Address:", data.staddress); 
-      console.log("Region:", data.region); 
-      console.log("State:", data.state); 
-      console.log("Elevation:", data.elevation); 
-  
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-
-}
-
-function noGeolocationCallback(error){
-
-  console.error("Error getting user's location:", error);
-      
-}
+//   xhr.onreadystatechange = function () {
+//     if (xhr.readyState == 4) {
+//       let responseData = JSON.parse(xhr.responseText);
+//       console.log(responseData);
+//       loginCallback(responseData, xhr.status);
+//     }
+//   };
+//   let requestBody = JSON.stringify(dataObject);
+//   xhr.send(requestBody);
+//   guest = true;
+// }

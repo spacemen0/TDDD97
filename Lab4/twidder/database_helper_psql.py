@@ -2,9 +2,13 @@ import psycopg2
 from psycopg2 import Error
 from twidder.config_reader import database_config
 
+# this file contains all the methods to interact with the remote database
 
+
+# connect t o postgreSQL database and create necessary tables
 def init_db():
     try:
+        # read all the necessary database configuration
         conn = psycopg2.connect(
             dbname=database_config()["dbname"],
             user=database_config()["user"],
@@ -15,13 +19,14 @@ def init_db():
         create_user_table(conn)
         create_message_table(conn)
         create_token_table(conn)
-        create_url_token_table(conn)
+        # create_url_token_table(conn)
         return conn
     except Error as e:
         print(f"Error while connecting to PostgreSQL: {e}")
         return None
 
 
+# user table, store user accounts
 def create_user_table(conn):
     try:
         cursor = conn.cursor()
@@ -45,6 +50,7 @@ def create_user_table(conn):
         print(f"Error while creating 'users' table: {e}")
 
 
+# message table
 def create_message_table(conn):
     try:
         cursor = conn.cursor()
@@ -64,6 +70,7 @@ def create_message_table(conn):
         print(f"Error while creating 'messages' table: {e}")
 
 
+# token table, stores tokens for authentication, the id of a token is always equal to the id of the user it belongs to
 def create_token_table(conn):
     try:
         cursor = conn.cursor()
@@ -81,24 +88,26 @@ def create_token_table(conn):
         print(f"Error while creating 'tokens' table: {e}")
 
 
-def create_url_token_table(conn):
-    try:
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS URLtokens (
-                id INTEGER PRIMARY KEY,
-                email TEXT,
-                token TEXT
-            )
-        """
-        )
-        conn.commit()
-        cursor.close()
-    except Error as e:
-        print(f"Error while creating 'URLtokens' table: {e}")
+# for generating password recovery links but not necessary now
+# def create_url_token_table(conn):
+#     try:
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             """
+#             CREATE TABLE IF NOT EXISTS URLtokens (
+#                 id INTEGER PRIMARY KEY,
+#                 email TEXT,
+#                 token TEXT
+#             )
+#         """
+#         )
+#         conn.commit()
+#         cursor.close()
+#     except Error as e:
+#         print(f"Error while creating 'URLtokens' table: {e}")
 
 
+# inserts a user to user table and returns user id
 def create_user(conn, user):
     try:
         cursor = conn.cursor()
@@ -121,6 +130,7 @@ def create_user(conn, user):
             cursor.close()
 
 
+# get user by user id, returns a tuple
 def get_user_by_id(conn, user_id):
     try:
         cursor = conn.cursor()
@@ -135,6 +145,7 @@ def get_user_by_id(conn, user_id):
             cursor.close()
 
 
+# get user by user email, returns a tuple
 def get_user_by_email(conn, email):
     try:
         cursor = conn.cursor()
@@ -149,6 +160,7 @@ def get_user_by_email(conn, email):
             cursor.close()
 
 
+# update user password
 def update_password(conn, user_id, password):
     try:
         cursor = conn.cursor()
@@ -163,6 +175,7 @@ def update_password(conn, user_id, password):
             cursor.close()
 
 
+# insert a message into messages table
 def create_message(conn, sender, receiver, message):
     try:
         cursor = conn.cursor()
@@ -181,6 +194,7 @@ def create_message(conn, sender, receiver, message):
             cursor.close()
 
 
+# retrieve all messages by receiver, returns a list of message
 def get_messages_by_receiver(conn, user_id):
     try:
         cursor = conn.cursor()
@@ -195,6 +209,7 @@ def get_messages_by_receiver(conn, user_id):
             cursor.close()
 
 
+# called when user logins in and server assigns they a token. insert a token into tokens table
 def issue_token(conn, user_id, token):
     try:
         cursor = conn.cursor()
@@ -213,6 +228,7 @@ def issue_token(conn, user_id, token):
             cursor.close()
 
 
+# called when user signs out or signs in. delete their previous token from tokens table
 def delete_token(conn, token):
     try:
         cursor = conn.cursor()
@@ -225,6 +241,7 @@ def delete_token(conn, token):
             cursor.close()
 
 
+# get token by user id
 def get_token_by_id(conn, user_id):
     try:
         cursor = conn.cursor()
@@ -239,6 +256,7 @@ def get_token_by_id(conn, user_id):
             cursor.close()
 
 
+# get user id by token value
 def get_token_id(conn, token):
     try:
         cursor = conn.cursor()
@@ -253,63 +271,50 @@ def get_token_id(conn, token):
             cursor.close()
 
 
-def get_all_tokens(conn):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM tokens")
-        tokens = cursor.fetchall()
-        return tokens
-    except Error as e:
-        print(f"Error while fetching all tokens: {e}")
-        return None
-    finally:
-        if cursor:
-            cursor.close()
+# for generating password recovery links but not necessary now
+# def register_url_token(conn, id, email, token):
+#     try:
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             "INSERT INTO URLtokens (id, email, token) VALUES (%s, %s, %s)",
+#             (
+#                 id,
+#                 email,
+#                 token,
+#             ),
+#         )
+#         conn.commit()
+#     except Error as e:
+#         print(f"Error while registering URLtoken: {e}")
+#     finally:
+#         if cursor:
+#             cursor.close()
 
+# for generating password recovery links but not necessary now
+# def validate_url_token(conn, token):
+#     try:
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT * FROM URLtokens WHERE token = %s", (token,))
+#         res = cursor.fetchone()
+#         return res if res else None
+#     except Error as e:
+#         print(f"Error while validating URLtoken: {e}")
+#         return None
+#     finally:
+#         if cursor:
+#             cursor.close()
 
-def register_url_token(conn, id, email, token):
-    try:
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO URLtokens (id, email, token) VALUES (%s, %s, %s)",
-            (
-                id,
-                email,
-                token,
-            ),
-        )
-        conn.commit()
-    except Error as e:
-        print(f"Error while registering URLtoken: {e}")
-    finally:
-        if cursor:
-            cursor.close()
-
-
-def validate_url_token(conn, token):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM URLtokens WHERE token = %s", (token,))
-        res = cursor.fetchone()
-        return res if res else None
-    except Error as e:
-        print(f"Error while validating URLtoken: {e}")
-        return None
-    finally:
-        if cursor:
-            cursor.close()
-
-
-def delete_url_token(conn, id):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM URLtokens WHERE id = %s", (id,))
-        conn.commit()
-    except Error as e:
-        print(f"Error while deleting URLtoken: {e}")
-    finally:
-        if cursor:
-            cursor.close()
+# for generating password recovery links but not necessary now
+# def delete_url_token(conn, id):
+#     try:
+#         cursor = conn.cursor()
+#         cursor.execute("DELETE FROM URLtokens WHERE id = %s", (id,))
+#         conn.commit()
+#     except Error as e:
+#         print(f"Error while deleting URLtoken: {e}")
+#     finally:
+#         if cursor:
+#             cursor.close()
 
 
 def close_db(conn):

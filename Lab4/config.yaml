@@ -1,0 +1,15 @@
+smtp:
+  app_psd: "apppassword"
+  sender: "dropeighteens@gmail.com"
+  server: "smtp.gmail.com"
+
+server:
+  port: 8000
+  host: "http://twidder4dorks.azurewebsites.net"
+
+database:
+  user: "koqkmwulwc"
+  dbname: "twidder4dorks-database"
+  password: "databasepassword"
+  host: "twidder4dorks-server.postgres.database.azure.com"
+  port: "5432"
